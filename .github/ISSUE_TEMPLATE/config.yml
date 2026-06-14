@@ -1,0 +1,13 @@
+# Disable blank issues so reports go through a template (or the security link below).
+blank_issues_enabled: false
+contact_links:
+  # IMPORTANT: replace OWNER in the URLs below with the maintainer's GitHub handle.
+  - name: 🔒 Report a security vulnerability (private)
+    url: https://github.com/OWNER/colfin-harness/security/advisories/new
+    about: >-
+      Do NOT open a public issue for security problems. Report privately via GitHub
+      Security Advisories. Never include real credentials, account numbers, or balances.
+      See SECURITY.md.
+  - name: 📄 Security policy
+    url: https://github.com/OWNER/colfin-harness/blob/main/SECURITY.md
+    about: How to report vulnerabilities and what never to include in a report.

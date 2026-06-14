@@ -1,0 +1,40 @@
+colfin-harness
+Copyright 2026 Carlson Go
+
+This product is licensed under the Apache License, Version 2.0 (see the
+LICENSE file). The following notices are provided for informational and
+attribution purposes.
+
+--------------------------------------------------------------------------------
+Affiliation
+--------------------------------------------------------------------------------
+
+This is an independent, unofficial project. It is NOT affiliated with, endorsed
+by, or supported by COL Financial Group, Inc. "COL Financial" and related names
+and marks belong to their respective owners. Use of the COL Financial platform
+is governed by COL Financial's own Terms and Conditions, which you alone are
+responsible for complying with. See the "Legal and disclaimer" section of
+README.md.
+
+--------------------------------------------------------------------------------
+Third-party components
+--------------------------------------------------------------------------------
+
+Google Gemma (vision-language model)
+  This software drives a Google Gemma model to perform vision and reasoning.
+  The Gemma model is NOT included in or redistributed by this repository. Model
+  weights are downloaded by the user directly from Hugging Face (e.g. the
+  "mlx-community" Gemma-on-MLX builds). Use of the Gemma model is subject to
+  Google's Gemma Terms of Use and the Gemma Prohibited Use Policy, which you are
+  responsible for reviewing and accepting:
+    https://ai.google.dev/gemma/terms
+    https://ai.google.dev/gemma/prohibited_use_policy
+
+mlx-vlm
+  Vision-language model serving/inference on Apple Silicon via Apple's MLX.
+  Licensed by its authors under the MIT License.
+    https://github.com/Blaizzy/mlx-vlm
+
+Other Python dependencies (Playwright, httpx, BeautifulSoup, lxml, pydantic,
+and their transitive dependencies) are obtained from their respective upstream
+projects under their own licenses and are not redistributed by this repository.

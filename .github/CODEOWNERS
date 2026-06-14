@@ -1,0 +1,21 @@
+# CODEOWNERS
+#
+# IMPORTANT: replace @OWNER below with the maintainer's actual GitHub handle
+# (e.g. @your-github-username). Until @OWNER is a real account, these rules will
+# silently have no effect.
+#
+# The files listed here encode the project's non-negotiable invariants: the
+# order-submission safety guard, the credential-handling rules, and the model-family
+# lock. Changes to them require the maintainer's review.
+# (See CONTRIBUTING.md and CLAUDE.md for the why.)
+
+# Safety contract — the harness must never submit, modify, or cancel an order.
+/src/colfin_harness/agents/order_entry.py   @OWNER
+/tests/test_order_entry_guard.py            @OWNER
+
+# Credential handling — no creds in code/config/env; no COLFIN_PASSWORD.
+/src/colfin_harness/credentials.py          @OWNER
+
+# Model-family lock — Google Gemma on MLX only.
+/src/colfin_harness/config.py               @OWNER
+/tests/test_model_selection.py              @OWNER
