@@ -1,6 +1,7 @@
 """Read-only quotes agent (docs/read-only-agents.md, Agent 1 + Quotes tab)."""
 
 from colfin_harness.agents.base import BaseAgent
+from colfin_harness.exceptions import StaleTradePrices
 from colfin_harness.parsing.quotes import parse_quote
 from colfin_harness.parsing.stock_info import (
     parse_broker_activity,
@@ -50,8 +51,22 @@ class QuotesAgent(BaseAgent):
         "current stock", which only the stock-info fetch sets. The two requests
         must stay back-to-back for the same symbol; anything interleaved that
         quotes another symbol would repoint the shared state.
+
+        The state-setting fetch is parsed, not just fired: an unknown symbol
+        leaves the server state pointing at the previously quoted stock, and
+        without the QuoteNotFound here TRADEPRICES would come back as that
+        stock's data mislabeled with the requested symbol. The company-name
+        cross-check catches the same staleness arriving by any other route.
         """
         symbol = symbol.strip().upper()
-        self._source.fetch_fragment(STOCK_INFO_PATH, {"q": symbol})
-        html = self._source.fetch_fragment(TRADE_PRICES_PATH)
-        return parse_trade_prices(html, symbol=symbol)
+        info = parse_stock_info(
+            self._source.fetch_fragment(STOCK_INFO_PATH, {"q": symbol}), symbol=symbol
+        )
+        prices = parse_trade_prices(self._source.fetch_fragment(TRADE_PRICES_PATH), symbol=symbol)
+        if prices.company_name is not None and prices.company_name != info.company_name:
+            raise StaleTradePrices(
+                f"trade prices came back for {prices.company_name!r}, not "
+                f"{info.company_name!r} ({symbol}) — the server-side current-stock "
+                "state was repointed between the two fetches"
+            )
+        return prices

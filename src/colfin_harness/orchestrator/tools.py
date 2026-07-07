@@ -88,7 +88,8 @@ def build_default_registry(session, quotes, portfolio, order_entry) -> ToolRegis
             "get_stock_info",
             "Detailed Quotes-tab stock info: 5-level bid/ask depth with order counts, "
             "last 5 trades with broker names, and stats (market cap, outstanding shares, "
-            "board lot, floor/ceiling price, 52wk-style dynamic thresholds, foreign access).",
+            "board lot, floor/ceiling price, intraday dynamic trading thresholds, "
+            "foreign access).",
             {"symbol": "PSE ticker, e.g. TEL"},
             get_stock_info,
         )

@@ -12,7 +12,7 @@ from colfin_harness.agents.quotes import (
     TRADE_PRICES_PATH,
     QuotesAgent,
 )
-from colfin_harness.exceptions import ParseError, QuoteNotFound
+from colfin_harness.exceptions import ParseError, QuoteNotFound, StaleTradePrices
 from colfin_harness.parsing.stock_info import (
     parse_broker_activity,
     parse_stock_info,
@@ -93,6 +93,29 @@ def test_parse_stock_info_invalid_symbol_raises(fixture_html):
         parse_stock_info(fixture_html("stock_info_invalid.html"), symbol="ZZZZ")
 
 
+def test_parse_stock_info_caps_depth_at_schema_limit(fixture_html):
+    """A widened depth grid must degrade to the first 5 levels, not crash
+    against StockInfo.depth's max_length (same convention as parse_quote)."""
+    extra = (
+        "<tr><td>1</td><td>100</td><td>1,150.0000</td>"
+        "<td>1,163.0000</td><td>100</td><td>1</td></tr></table>"
+    )
+    html = fixture_html("stock_info.html").replace("</table>", extra, 1)
+
+    info = parse_stock_info(html, symbol="TEL")
+
+    assert len(info.depth) == 5
+    assert info.depth[4].offer_price == Decimal("1162.0000")
+
+
+def test_parse_stock_info_suspended_dash_change_raises(fixture_html):
+    """A non-numeric Change (e.g. '-' on a suspended stock) fails loudly
+    rather than returning a partial quote."""
+    html = fixture_html("stock_info.html").replace("\n-5.0000\n", "-").replace("\n-0.43\n", "-")
+    with pytest.raises(ParseError):
+        parse_stock_info(html, symbol="TEL")
+
+
 # --- top buyers / sellers ---------------------------------------------------
 
 
@@ -127,6 +150,23 @@ def test_parse_broker_activity_without_title_raises():
         parse_broker_activity("<html><body><table></table></body></html>")
 
 
+def test_parse_broker_activity_headers_only_is_empty_not_error():
+    """A no-trades-yet page (title + column headers, no data rows) is a
+    legitimate empty result, not a parse failure."""
+    html = (
+        "<html><body>"
+        "<table><tr><td><b>TOP BUYERS</b></td></tr></table>"
+        "<table><tr><td></td><td>Broker</td><td>Buy Vol</td><td>Buy Amt</td>"
+        "<td>Buy Ave</td><td>% Mkt</td></tr></table>"
+        "<p>Values displayed as of 2:07:33 PM</p></body></html>"
+    )
+    activity = parse_broker_activity(html, symbol="TEL")
+
+    assert activity.side is BrokerSide.BUYERS
+    assert activity.rows == []
+    assert activity.as_of == "2:07:33 PM"
+
+
 # --- trade prices -----------------------------------------------------------
 
 
@@ -151,6 +191,16 @@ def test_parse_trade_prices_rows_and_totals(fixture_html):
 def test_parse_trade_prices_empty_raises():
     with pytest.raises(ParseError):
         parse_trade_prices("<html><body></body></html>", symbol="TEL")
+
+
+def test_parse_trade_prices_missing_company_header_is_none(fixture_html):
+    """Without the gray company line, the data table's bold column headers
+    must not be mistaken for a company name."""
+    html = fixture_html("trade_prices.html").replace("<b>PLDT Inc.</b>", "")
+    prices = parse_trade_prices(html, symbol="TEL")
+
+    assert prices.company_name is None
+    assert len(prices.rows) == 11
 
 
 # --- agent request protocol ---------------------------------------------------
@@ -210,3 +260,34 @@ def test_agent_trade_prices_sets_current_stock_first(fixture_html):
     ]
     assert prices.symbol == "TEL"
     assert prices.total_trades == 1082
+
+
+def test_agent_trade_prices_unknown_symbol_raises_not_stale_data(fixture_html):
+    """An unknown symbol leaves the server-side current stock unchanged, so
+    TRADEPRICES would render the previously quoted stock. The agent must raise
+    on the invalid quote instead of returning that data mislabeled."""
+    source = SequencedSource(
+        {
+            STOCK_INFO_PATH: fixture_html("stock_info_invalid.html"),
+            TRADE_PRICES_PATH: fixture_html("trade_prices.html"),
+        }
+    )
+    with pytest.raises(QuoteNotFound):
+        QuotesAgent(source).get_trade_prices("ZZZZ")
+    # and it never even fetched trade prices
+    assert source.requests == [(STOCK_INFO_PATH, {"q": "ZZZZ"})]
+
+
+def test_agent_trade_prices_company_mismatch_raises(fixture_html):
+    """If the current-stock state gets repointed between the two fetches, the
+    company names disagree and the agent must refuse to mislabel the data."""
+    source = SequencedSource(
+        {
+            STOCK_INFO_PATH: fixture_html("stock_info.html"),  # PLDT Inc.
+            TRADE_PRICES_PATH: fixture_html("trade_prices.html").replace(
+                "<b>PLDT Inc.</b>", "<b>Ayala Land, Inc.</b>"
+            ),
+        }
+    )
+    with pytest.raises(StaleTradePrices):
+        QuotesAgent(source).get_trade_prices("TEL")

@@ -19,7 +19,7 @@ import re
 from bs4 import BeautifulSoup, Tag
 
 from colfin_harness.exceptions import ParseError, QuoteNotFound
-from colfin_harness.parsing.quotes import _company_name, _direction
+from colfin_harness.parsing.quotes import company_name_from, direction_from
 from colfin_harness.parsing.util import to_decimal, to_int
 from colfin_harness.schemas import (
     BrokerActivity,
@@ -88,7 +88,9 @@ def parse_stock_info(html: str, symbol: str | None = None) -> StockInfo:
     for tr in mytable.find_all("tr"):
         cells = _cells(tr)
         values = [to_decimal(c) for c in cells]
-        if len(cells) == 6 and all(v is not None for v in values):
+        # Cap like parse_quote does: a widened grid must degrade, not crash
+        # against the schema's max_length.
+        if len(cells) == 6 and all(v is not None for v in values) and len(depth) < 5:
             depth.append(
                 StockDepthLevel(
                     bid_orders=int(values[0]),
@@ -155,11 +157,11 @@ def parse_stock_info(html: str, symbol: str | None = None) -> StockInfo:
 
     return StockInfo(
         symbol=symbol,
-        company_name=_company_name(soup, mytable),
+        company_name=company_name_from(soup, mytable),
         last=last,
         change=change,
         pct_change=pct_change,
-        direction=_direction(_row_font_color(header["last"][0]), change),
+        direction=direction_from(_row_font_color(header["last"][0]), change),
         depth=depth,
         last_trades=last_trades,
         stats=stats,
@@ -236,10 +238,14 @@ def parse_trade_prices(html: str, symbol: str | None = None) -> TradePrices:
         raise ParseError(f"trade-prices fragment for {symbol!r}: no per-price rows found")
     result.rows = rows
 
-    # Company name: first non-numeric bold text (the gray header line).
+    # Company name: the gray header line's bold text. The data table (class
+    # "reference") also bolds its column headers and Totals row, so only look
+    # outside it — better no name than "Price".
     for b in soup.find_all(["b", "strong"]):
+        if b.find_parent("table", class_="reference") is not None:
+            continue
         name = b.get_text(" ", strip=True)
-        if name and to_decimal(name) is None and name.lower() != "totals":
+        if name and to_decimal(name) is None:
             result.company_name = name
             break
     return result
