@@ -149,6 +149,44 @@ class TradePrices(BaseModel):
     total_trades: int | None = None
 
 
+# --- Research: Technical Guide (Research/TECHGUIDE_Mid.asp) -----------------
+
+
+class LevelRole(str, Enum):
+    """What a support/resistance level is currently acting as. Encoded by the
+    nested font color on the value: red = resistance, black = support."""
+
+    SUPPORT = "support"
+    RESISTANCE = "resistance"
+
+
+class TechGuideEntry(BaseModel):
+    """One row of the Technical Guide table. Trend and recommendation are the
+    platform's own vocabulary, kept verbatim (observed: trend UP | DOWN |
+    SIDEWAYS; recommendation BUY | HOLD | SELL | SELL INTO STRENGTH | LIGHTEN |
+    RANGE TRADE | TAKE PROFITS)."""
+
+    ticker: str
+    company_name: str
+    sector: str | None = None  # the guide's own grouping, incl. "Index"
+    price: Decimal | None = None
+    short_term: Decimal | None = None
+    short_term_role: LevelRole | None = None
+    medium_term: Decimal | None = None
+    medium_term_role: LevelRole | None = None
+    week52_high: Decimal | None = None
+    week52_low: Decimal | None = None
+    pct_from_week52_high: Decimal | None = None
+    trend: str | None = None
+    recommendation: str | None = None
+    rating_initiated: str | None = None  # date the recommendation first triggered
+
+
+class TechnicalGuide(BaseModel):
+    as_of: str | None = None  # publication date from the header fragment
+    entries: list[TechGuideEntry] = Field(default_factory=list)
+
+
 # --- Portfolio ------------------------------------------------------------
 
 

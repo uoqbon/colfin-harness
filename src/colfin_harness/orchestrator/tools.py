@@ -9,6 +9,8 @@ model's next vision turn.
 from collections.abc import Callable
 from dataclasses import dataclass, field
 
+from colfin_harness.schemas import TechnicalGuide
+
 
 @dataclass
 class ToolResult:
@@ -45,7 +47,7 @@ class ToolRegistry:
         return "\n".join(lines)
 
 
-def build_default_registry(session, quotes, portfolio, order_entry) -> ToolRegistry:
+def build_default_registry(session, quotes, portfolio, order_entry, research) -> ToolRegistry:
     """Wire the standard tool set: read-only data, vision, and the gated
     order-entry probe. Nothing here can submit an order."""
     registry = ToolRegistry()
@@ -64,6 +66,32 @@ def build_default_registry(session, quotes, portfolio, order_entry) -> ToolRegis
 
     def get_portfolio() -> str:
         return portfolio.get_portfolio().model_dump_json()
+
+    def get_technical_guide(symbol: str = "", recommendation: str = "") -> str:
+        """Filtered views of the guide: the full 250-stock dump would drown
+        the model's context, so unfiltered calls get a compact overview."""
+        guide = research.get_technical_guide()
+        if symbol:
+            wanted = symbol.strip().upper()
+            for entry in guide.entries:
+                if entry.ticker == wanted:
+                    return TechnicalGuide(as_of=guide.as_of, entries=[entry]).model_dump_json()
+            return f"No Technical Guide entry for {wanted!r} (as of {guide.as_of})."
+        if recommendation:
+            wanted = recommendation.strip().upper()
+            matches = [e for e in guide.entries if (e.recommendation or "").upper() == wanted]
+            if not matches:
+                seen = sorted({e.recommendation for e in guide.entries if e.recommendation})
+                return f"No entries rated {wanted!r}. Ratings in this guide: {', '.join(seen)}."
+            return TechnicalGuide(as_of=guide.as_of, entries=matches).model_dump_json()
+        by_reco: dict[str, list[str]] = {}
+        for entry in guide.entries:
+            by_reco.setdefault(entry.recommendation or "?", []).append(entry.ticker)
+        lines = [f"Technical Guide as of {guide.as_of}: {len(guide.entries)} entries."]
+        for reco, tickers in sorted(by_reco.items()):
+            lines.append(f"- {reco} ({len(tickers)}): {', '.join(tickers)}")
+        lines.append("Call again with a symbol for a stock's full entry.")
+        return "\n".join(lines)
 
     def take_screenshot() -> ToolResult:
         path = session.screenshot()
@@ -118,6 +146,21 @@ def build_default_registry(session, quotes, portfolio, order_entry) -> ToolRegis
             "Account summary: cash balance, buying power, equity and mutual-fund holdings, P&L.",
             {},
             get_portfolio,
+        )
+    )
+    registry.register(
+        Tool(
+            "get_technical_guide",
+            "COL Research's Technical Guide: per-stock support/resistance levels "
+            "(short and medium term), 52-week range, trend (UP/DOWN/SIDEWAYS) and "
+            "recommendation (BUY, HOLD, SELL, SELL INTO STRENGTH, LIGHTEN, RANGE "
+            "TRADE, TAKE PROFITS). No args: overview of all covered stocks grouped "
+            "by recommendation. Published periodically — quote the as_of date.",
+            {
+                "symbol": "optional PSE ticker for one stock's full entry, e.g. TEL",
+                "recommendation": "optional rating to list all stocks rated that way, e.g. BUY",
+            },
+            get_technical_guide,
         )
     )
     registry.register(
