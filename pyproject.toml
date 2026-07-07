@@ -9,7 +9,7 @@ requires-python = ">=3.11,<3.14"
 dependencies = [
     "mlx>=0.24; sys_platform == 'darwin'",
     "mlx-vlm>=0.1.26; sys_platform == 'darwin'",
-    "playwright>=1.49",
+    "playwright>=1.61.0",
     "httpx>=0.28",
     "beautifulsoup4>=4.12",
     "lxml>=5.3",
