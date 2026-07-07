@@ -118,6 +118,46 @@ Returns cash balance, equity holdings, mutual-fund holdings, and P&L.
 
 ---
 
+## Agent 3 — Research / Technical Guide (read-only)
+
+COL Research's published per-stock technical view: support/resistance levels, trend,
+and recommendation. Mapped 2026-07-07 from a live session.
+
+- **UI path:** top-nav `clickTable(4,1)` (Research) → **Technicals** submenu →
+  **Technical Guide** (the link sits in the header frame's `id="RR3T"` nav table).
+  That loads `Research/TECHGUIDE.asp`, a frameset of:
+  - `Research/TECHGUIDE_Top.asp` — title, **"As of: <Month D, YYYY>" publication date**,
+    sort headings (`onclick` reloads the mid frame), and a `PhilTechGuide.pdf` link.
+  - `Research/TECHGUIDE_Mid.asp` — the data table (~390 KB, ~253 entries).
+- **Endpoints:** both are plain cookie-authenticated `GET`s, no params needed.
+  `TECHGUIDE_MID.asp?sort_by=,<col>` re-sorts server-side (`stock_code`, `week_high`,
+  `trend_mode`, `recommendation`) — the harness fetches the default order and
+  filters/sorts in Python instead.
+- **Table shape:** no table id — anchor on the column-header row whose first cell is
+  `Ticker`. Below it, **sector separator rows** (`<td colspan=11 bgcolor=#214D84>`:
+  Index · Banks · Commercial · Conglomerates · Consumer · Insurance · Mining ·
+  Property · Services · Telecoms · Selected) and 11-cell data rows:
+  `Ticker · Company Name · Price · Short Term · Medium Term · 52Wk High · 52Wk Low ·
+  % From 52Wk High · Trend Mode · Recommendation · Rating Initiated`.
+  PSE indices (PASHR, PCOMP, …) appear as normal rows under the `Index` sector.
+- **Color encoding:** Short/Medium Term values carry a nested
+  `<font color=red|black>` mirroring the two-tone "Support/**Resistance**" heading —
+  **red = level currently acting as resistance, black = support**. Trend Mode renders
+  UP green / DOWN red / SIDEWAYS `#FF6500`; recommendations use the same palette but
+  the text is authoritative.
+- **Vocabulary observed:** trend `UP | DOWN | SIDEWAYS`; recommendation
+  `BUY | HOLD | SELL | SELL INTO STRENGTH | LIGHTEN | RANGE TRADE | TAKE PROFITS`.
+  Keep both verbatim — treat the sets as open.
+- **Rating Initiated** is the date the current recommendation first triggered.
+  The guide is republished periodically (as-of date can trail today by weeks), so
+  always surface the `As of` date next to any recommendation.
+- Adjacent Technicals surfaces (not yet mapped): Bulls Eye, Spotlight.
+
+Synthetic fixtures from this mapping: `tests/fixtures/tech_guide.html`,
+`tech_guide_top.html`.
+
+---
+
 ## Harness implications
 
 1. **Both agents are pure `GET` + HTML-parse** against the endpoints above — no UI driving
