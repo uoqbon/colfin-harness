@@ -53,6 +53,15 @@ def build_default_registry(session, quotes, portfolio, order_entry) -> ToolRegis
     def get_quote(symbol: str) -> str:
         return quotes.get_quote(symbol).model_dump_json()
 
+    def get_stock_info(symbol: str) -> str:
+        return quotes.get_stock_info(symbol).model_dump_json()
+
+    def get_top_brokers(symbol: str) -> str:
+        return quotes.get_top_brokers(symbol).model_dump_json()
+
+    def get_trade_prices(symbol: str) -> str:
+        return quotes.get_trade_prices(symbol).model_dump_json()
+
     def get_portfolio() -> str:
         return portfolio.get_portfolio().model_dump_json()
 
@@ -72,6 +81,35 @@ def build_default_registry(session, quotes, portfolio, order_entry) -> ToolRegis
             "Real-time PSE stock quote: last/change/%change, 3-level depth, OHLC, value, volume.",
             {"symbol": "PSE ticker, e.g. TEL"},
             get_quote,
+        )
+    )
+    registry.register(
+        Tool(
+            "get_stock_info",
+            "Detailed Quotes-tab stock info: 5-level bid/ask depth with order counts, "
+            "last 5 trades with broker names, and stats (market cap, outstanding shares, "
+            "board lot, floor/ceiling price, intraday dynamic trading thresholds, "
+            "foreign access).",
+            {"symbol": "PSE ticker, e.g. TEL"},
+            get_stock_info,
+        )
+    )
+    registry.register(
+        Tool(
+            "get_top_brokers",
+            "Today's top buying and selling brokers for a stock, with volumes, amounts, "
+            "average prices, and % of market.",
+            {"symbol": "PSE ticker, e.g. TEL"},
+            get_top_brokers,
+        )
+    )
+    registry.register(
+        Tool(
+            "get_trade_prices",
+            "Today's per-price trade distribution for a stock (volume, amount, trades and "
+            "% of value at each traded price, plus totals and average price).",
+            {"symbol": "PSE ticker, e.g. TEL"},
+            get_trade_prices,
         )
     )
     registry.register(

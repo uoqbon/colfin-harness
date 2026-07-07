@@ -38,6 +38,55 @@ Fetches a real-time stock quote with depth and OHLC.
 - **Parse note:** values are positional table cells (not `id`-tagged), so parse the
   fragment by table/row position or by the `mytable` id, not by per-field ids.
 
+### Quotes tab (top-nav `clickTable(2,1)`) — mapped 2026-07-07 from a live session
+
+The Quotes tab's **Stock Information → Stock** page (`quotes/Pse_Quote.asp`, body frame
+`quotes/PSE_QUOTE_2.ASP`) is a richer quote surface than the header quote box. Sub-tabs:
+Stock · Buyers/Sellers · Trade Prices · I-Charts · Profile · Dividends · News ·
+Valuations · Highlights · Research.
+
+**Working data endpoints** (all cookie-authenticated GETs returning HTML fragments):
+
+| Endpoint | Params | Content |
+|---|---|---|
+| `quotes/Pse_Quote_2_DB.asp` | `q=<SYMBOL>` (+ optional `_` cache-buster) | Full quote: company name, 5-level bid/ask depth **with posted-order counts**, Last 5 Trades (time/volume/price/buyer/seller broker names, 8-char truncated), and a 23-row stats table |
+| `quotes/TOPBUYER.asp` | `varstock=<SYMBOL>` (**required** — bare returns an empty table) | Top buying brokers: rank, broker (12-char truncated), Buy Vol, Buy Amt, Buy Ave, % Mkt |
+| `quotes/TOPSELLER.asp` | `varstock=<SYMBOL>` (required) | Top selling brokers, same columns (Sell \*) |
+| `quotes/TRADEPRICES.asp` | **none — ignores all params** | Per-price trade distribution: rank, Price, Volume, Amount, Trades, Percent + a `Totals` row (`<price>(ave)` in the price cell) |
+
+**Session-stateful protocol:** fetching `Pse_Quote_2_DB.asp?q=SYM` also sets the
+server-side "current stock" for the session; `TRADEPRICES.asp` renders whatever that
+state points at. So a trade-prices fetch must be **sequenced immediately after the quote
+fetch for the same symbol** (the shared session state is a cross-request race otherwise).
+The UI shell (`PSE_QUOTE_2.ASP`) polls `Pse_Quote_2_DB.asp` via jQuery ("Auto Update"),
+mirroring the home page's `Pse_Quote_AU.asp`/`Pse_Quote_AU_DB.asp` split.
+
+**Stats-table labels** (label/value rows, in order): Previous, Last, Change, %Change,
+Open, High, Low, Value, Trades, Volume, Outstanding, Market Capitalization,
+Inst. Status, Market Status, BoardLot, Fluctuation, Floor Price, CeilingPrice,
+Dyn T Low, Dyn T High, Par Value, Margin Rate %, Open to Foreigners.
+Last/Change/%Change render as `<font color=red|green>` (direction encoding); Inst./
+Market Status and Open to Foreigners are text values.
+
+**Depth grid (`id="mytable"`):** two header rows, then 5 data rows of 6 cells:
+`bid orders · bid size · bid price · ask price · ask size · ask orders`.
+Bid cells render green, ask cells red, order counts neutral — colors are decoration
+here, not direction.
+
+**Invalid symbol:** `Pse_Quote_2_DB.asp?q=<bad>` returns a ~780-byte stub with **no
+`mytable`** (just the stylesheet and an empty shell) — same detection as the home quote.
+
+**Unavailable (server-disabled as of mapping):** Profile / Dividends / News /
+Valuations / Highlights all redirect to `XML/function_unavailable.asp`; their direct
+endpoints (`XML/CompanyProfile_2.asp`, `XML/DividendHistory_2.asp`,
+`XML/CompanyHeadline_2.asp`, `XML/CompanyValuation_2.asp`,
+`XML/FinancialHighlights_2.asp`) return "This page is currently unavailable."
+I-Charts is a chart applet (`CHART_APPLE/`), not a parseable data surface.
+
+Real scrubbed fixtures from this mapping: `tests/fixtures/stock_info.html`,
+`top_buyers.html`, `top_sellers.html`, `trade_prices.html`, `stock_info_invalid.html`
+(query strings stripped from attribute URLs; no account data appears on these pages).
+
 ---
 
 ## Agent 2 — Portfolio / Account Summary (read-only)

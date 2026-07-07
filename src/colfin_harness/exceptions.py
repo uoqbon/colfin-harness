@@ -10,6 +10,12 @@ class QuoteNotFound(ParseError):
     """Quote fragment has no data table — unknown symbol or empty response."""
 
 
+class StaleTradePrices(ParseError):
+    """TRADEPRICES.asp returned a different company than the one just quoted —
+    the server-side "current stock" state was repointed between the two
+    fetches, so the data would be mislabeled."""
+
+
 class SessionExpired(HarnessError):
     """The COL session cookie is no longer valid; re-login required."""
 

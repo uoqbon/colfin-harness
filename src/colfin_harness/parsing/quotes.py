@@ -25,7 +25,7 @@ _UP_COLORS = ("green", "#008000", "#00a000", "#00ff00")
 _STAT_LABELS = {"open", "high", "low", "trades", "value", "vol", "volume"}
 
 
-def _direction(color: str | None, change: Decimal) -> Direction:
+def direction_from(color: str | None, change: Decimal) -> Direction:
     c = (color or "").lower()
     if any(k in c for k in _DOWN_COLORS):
         return Direction.DOWN
@@ -38,7 +38,7 @@ def _direction(color: str | None, change: Decimal) -> Direction:
     return Direction.FLAT
 
 
-def _company_name(soup: BeautifulSoup, mytable: Tag) -> str:
+def company_name_from(soup: BeautifulSoup, mytable: Tag) -> str:
     # First bold text outside mytable, else first non-numeric cell text.
     for b in soup.find_all(["b", "strong"]):
         if b.find_parent(id="mytable") is None:
@@ -100,11 +100,11 @@ def parse_quote(html: str, symbol: str | None = None) -> Quote:
     trades = stats.get("trades")
     return Quote(
         symbol=symbol,
-        company_name=_company_name(soup, mytable),
+        company_name=company_name_from(soup, mytable),
         last=last,
         change=change,
         pct_change=pct_change,
-        direction=_direction(colored[1][0], change),
+        direction=direction_from(colored[1][0], change),
         depth=depth,
         ohlc=OHLC(open=stats.get("open"), high=stats.get("high"), low=stats.get("low")),
         trades=int(trades) if trades is not None else None,
