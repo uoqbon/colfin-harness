@@ -233,6 +233,9 @@ def test_parse_most_active_halted_row_kept_with_none_values(fixture_html):
     assert halted.last is None
     assert halted.change is None
     assert halted.pct_change is None
+    # The '-' cell keeps its old green font, but a color with no number is
+    # not a direction signal — the row must not claim UP with a None change.
+    assert halted.direction is Direction.FLAT
     assert halted.volume == 2505100  # untouched cells still parse
 
 

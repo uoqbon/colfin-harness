@@ -185,6 +185,14 @@ def parse_most_active(html: str) -> MostActive:
         if rank is None or not symbol:
             continue  # header row
         change = to_decimal(cells[3])
+        # A halted row's '-' cell can keep its old font color; a color with no
+        # number is not a direction signal, so don't let it contradict the
+        # None change.
+        direction = (
+            direction_from(_cell_font_color(tr, 3), change)
+            if change is not None
+            else Direction.FLAT
+        )
         rows.append(
             MostActiveRow(
                 rank=rank,
@@ -192,9 +200,7 @@ def parse_most_active(html: str) -> MostActive:
                 last=to_decimal(cells[2]),
                 change=change,
                 pct_change=to_decimal(cells[4]),
-                direction=direction_from(
-                    _cell_font_color(tr, 3), change if change is not None else 0
-                ),
+                direction=direction,
                 high=to_decimal(cells[5]),
                 low=to_decimal(cells[6]),
                 open=to_decimal(cells[7]),

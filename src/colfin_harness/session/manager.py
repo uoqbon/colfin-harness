@@ -101,6 +101,11 @@ class SessionManager:
         self._context = None
         self._stop_keepalive = threading.Event()
         self._keepalive_thread: threading.Thread | None = None
+        # Serializes keep-alive pings against relogin(): a re-login may re-pin
+        # to a new node mid-run, and a ping in flight across that re-pin would
+        # trip the escape check (stale host) or bounce off the new node before
+        # its cookie is synced — spurious warnings either way.
+        self._session_lock = threading.Lock()
 
     # -- node pinning ----------------------------------------------------------
 
@@ -126,7 +131,10 @@ class SessionManager:
         the configured default would falsely look logged-out after a node
         change. Invalid or missing cache content is ignored."""
         try:
-            cached = self.config.node_cache_file.read_text().strip()
+            # Bounded read: a valid cache is one short hostname, so never
+            # slurp an oversized (tampered) file into memory.
+            with self.config.node_cache_file.open() as fh:
+                cached = fh.read(256).strip()
         except OSError:
             return
         host = node_host(f"https://{cached}/")
@@ -274,8 +282,9 @@ class SessionManager:
         if self._context is None or not self._context.pages:
             raise LoginFailed("no live browser context for re-login")
         page = self._context.pages[0]
-        page.goto(self.config.login_url)
-        self._login(page)
+        with self._session_lock:  # keep the keep-alive out while we may re-pin
+            page.goto(self.config.login_url)
+            self._login(page)
 
     def is_authenticated(self) -> bool:
         try:
@@ -338,7 +347,9 @@ class SessionManager:
         # "greenlet.error: Cannot switch to a different thread"). The session
         # cookie already lives in the httpx jar and httpx keeps it fresh from
         # Set-Cookie, so ping with httpx alone. Home page, not the 403 dir root.
-        self._get_fragment(self.config.home_path)
+        # The lock keeps the ping from straddling a relogin()'s node re-pin.
+        with self._session_lock:
+            self._get_fragment(self.config.home_path)
 
     def start_keepalive(self) -> None:
         if self._keepalive_thread is not None:

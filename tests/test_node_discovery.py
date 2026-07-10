@@ -133,3 +133,11 @@ def test_apply_cached_node_ignores_missing_and_invalid_cache(tmp_path):
     mgr = SessionManager(Settings(node_cache_file=bad))
     mgr._apply_cached_node()
     assert mgr._host == default_host
+
+    # An oversized (tampered) cache is rejected without being slurped whole:
+    # only a bounded prefix is read, which cannot match the phNN pattern.
+    big = tmp_path / "big"
+    big.write_text("ph1.colfinancial.com" + "x" * 10_000)
+    mgr = SessionManager(Settings(node_cache_file=big))
+    mgr._apply_cached_node()
+    assert mgr._host == default_host
