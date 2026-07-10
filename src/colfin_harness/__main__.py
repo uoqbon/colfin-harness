@@ -9,7 +9,13 @@ turns. Type ``exit`` (or Ctrl-D) to end the session.
 import argparse
 import logging
 
-from colfin_harness.agents import OrderEntryAgent, PortfolioAgent, QuotesAgent, ResearchAgent
+from colfin_harness.agents import (
+    MarketInfoAgent,
+    OrderEntryAgent,
+    PortfolioAgent,
+    QuotesAgent,
+    ResearchAgent,
+)
 from colfin_harness.config import (
     DEFAULT_MODEL_ID,
     GEMMA_MLX_MODELS,
@@ -158,6 +164,7 @@ def main() -> int:
             PortfolioAgent(session),
             OrderEntryAgent(session),
             ResearchAgent(session),
+            MarketInfoAgent(session),
         )
         orchestrator = Orchestrator(runtime, registry)
         runtime.ensure_server()  # warm the model before the first question

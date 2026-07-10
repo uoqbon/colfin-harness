@@ -1,0 +1,398 @@
+
+<HTML>
+
+<HEAD>
+<script type="text/javascript">
+document.domain = /(\w+)(.\w+)?$/.exec(location.hostname)[0];
+</script>
+<script src="../jquery/jquery-latest.js"></script>
+<script src="../javascripts/CENTER.js"></script>
+
+<link rel="stylesheet" href="../css/table1.css" type="text/css" media="all" />
+</HEAD>
+
+<BODY topmargin="0" leftmargin="0" marginheight=0 marginwidth=0 rightmargin=0>
+
+<div align="center">
+<TABLE border="0" width="760" cellspacing="0" cellpadding="0" height="19">
+<TR>
+<TD width="100%" height="19"><b><font face="Helvetica" color="#424542" style="font-size: 11px">20 MOST ACTIVE STOCKS BY TRADE VALUE</font></b>
+<HR style="font-size: 11px" width="760" align="center">
+</TD>
+</TR>
+</TABLE>
+</div>
+
+<div align="center">
+<TABLE border="0" width="760" cellspacing="0" cellpadding="0">
+<TR>
+<TD width="760">
+<div align="left">
+<table border="0" width="760" height="285">
+<tr>
+<td width="582" height="232">
+
+<div align="center">
+<center>
+<table id="mytable" border="1" cellPadding="0" cellSpacing="0"
+style="margin-left: 10px" height="69" width="760" bordercolorlight="#424542" bordercolordark="#424542" bordercolor="#424542">
+<!--<TBODY>-->
+<tr bgColor="#666699">
+<th align="center" bgcolor="#31599C"><font color="#ffffff" face="Helvetica" style="font-size: 11px"><b>#</b></font></th>
+<th align="center" bgcolor="#31599C"><font color="#ffffff" face="Helvetica" style="font-size: 11px"><b>Stock Code</b></font></th>
+<th align="center" bgcolor="#31599C"><font color="#ffffff" face="Helvetica" style="font-size: 11px"><b>Last</b> </font></th>
+
+<th align="center" bgcolor="#31599C"><font color="#ffffff" face="Helvetica" style="font-size: 11px"><b>Change</b> </font></th>
+
+<th align="center" bgcolor="#31599C"><font color="#ffffff" face="Helvetica" style="font-size: 11px"><b>%Change</b> </font></th>
+
+<th align="center" bgcolor="#31599C"><font color="#ffffff" face="Helvetica" style="font-size: 11px"><b>High</b></font></th>
+<th align="center" bgcolor="#31599C"><font color="#ffffff" face="Helvetica" style="font-size: 11px"><b>Low</b></font></th>
+<th align="center" bgcolor="#31599C"><font color="#ffffff" face="Helvetica" style="font-size: 11px"><b>Open</b></font></th>
+<th align="center" bgcolor="#31599C"><font color="#ffffff" face="Helvetica" style="font-size: 11px"><b>Volume</b> </font></th>
+<th align="center" bgcolor="#31599C"><font color="#ffffff" face="Helvetica" style="font-size: 11px"><b>Value</b> </font></th></tr>
+
+<tr bgColor="#ffffff">
+<td align="center"><font face="Helvetica" style="font-size: 11px" color="#424542">1 </font> </nobr></td>
+<td class="pointer" align="left" onclick="gotolink('ICT ')" height="16" width="71" ><font face="Helvetica" style="font-size: 11px" color="blue">ICT </font></td>
+<td align="right"><nobr><font face="Helvetica" style="font-size: 11px" color="green"><b>985.0000</b></font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="green">13.5000</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="green">1.39%</font></td>
+
+<td align="right"><font style="font-size: 11px" color="#424542" face="Helvetica">987.5000</font></td>
+<td align="right"><font style="font-size: 11px" color="#424542" face="Helvetica">950.5000</font></td>
+<td align="right"><font style="font-size: 11px" color="#424542" face="Helvetica">963.0000</font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">2,505,100 </font> </nobr></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">2,446,265,600 </font> </nobr></td>
+</tr>
+
+<tr bgColor="#efefef">
+<td align="center"><font face="Helvetica" style="font-size: 11px" color="#424542">2 </font> </nobr></td>
+<td class="pointer" align="left" onclick="gotolink('APX ')" height="16" width="71" ><font face="Helvetica" style="font-size: 11px" color="blue">APX </font></td>
+<td align="right"><nobr><font face="Helvetica" style="font-size: 11px" color="green"><b>13.0000</b></font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="green">0.7600</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="green">6.21%</font></td>
+
+<td align="right"><font style="font-size: 11px" color="#424542" face="Helvetica">13.1800</font></td>
+<td align="right"><font style="font-size: 11px" color="#424542" face="Helvetica">12.4000</font></td>
+<td align="right"><font style="font-size: 11px" color="#424542" face="Helvetica">12.4000</font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">34,250,400 </font> </nobr></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">434,248,248 </font> </nobr></td>
+</tr>
+
+<tr bgColor="#ffffff">
+<td align="center"><font face="Helvetica" style="font-size: 11px" color="#424542">3 </font> </nobr></td>
+<td class="pointer" align="left" onclick="gotolink('ALI ')" height="16" width="71" ><font face="Helvetica" style="font-size: 11px" color="blue">ALI </font></td>
+<td align="right"><nobr><font face="Helvetica" style="font-size: 11px" color="green"><b>16.0000</b></font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="green">0.9000</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="green">5.96%</font></td>
+
+<td align="right"><font style="font-size: 11px" color="#424542" face="Helvetica">16.1200</font></td>
+<td align="right"><font style="font-size: 11px" color="#424542" face="Helvetica">15.2000</font></td>
+<td align="right"><font style="font-size: 11px" color="#424542" face="Helvetica">15.2000</font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">24,890,800 </font> </nobr></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">397,246,964 </font> </nobr></td>
+</tr>
+
+<tr bgColor="#efefef">
+<td align="center"><font face="Helvetica" style="font-size: 11px" color="#424542">4 </font> </nobr></td>
+<td class="pointer" align="left" onclick="gotolink('BPI ')" height="16" width="71" ><font face="Helvetica" style="font-size: 11px" color="blue">BPI </font></td>
+<td align="right"><nobr><font face="Helvetica" style="font-size: 11px" color="green"><b>103.0000</b></font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="green">2.0000</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="green">1.98%</font></td>
+
+<td align="right"><font style="font-size: 11px" color="#424542" face="Helvetica">104.0000</font></td>
+<td align="right"><font style="font-size: 11px" color="#424542" face="Helvetica">101.0000</font></td>
+<td align="right"><font style="font-size: 11px" color="#424542" face="Helvetica">101.0000</font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">3,134,360 </font> </nobr></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">323,030,263 </font> </nobr></td>
+</tr>
+
+<tr bgColor="#ffffff">
+<td align="center"><font face="Helvetica" style="font-size: 11px" color="#424542">5 </font> </nobr></td>
+<td class="pointer" align="left" onclick="gotolink('BDO ')" height="16" width="71" ><font face="Helvetica" style="font-size: 11px" color="blue">BDO </font></td>
+<td align="right"><nobr><font face="Helvetica" style="font-size: 11px" color="green"><b>124.2000</b></font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="green">1.2000</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="green">0.98%</font></td>
+
+<td align="right"><font style="font-size: 11px" color="#424542" face="Helvetica">126.5000</font></td>
+<td align="right"><font style="font-size: 11px" color="#424542" face="Helvetica">123.4000</font></td>
+<td align="right"><font style="font-size: 11px" color="#424542" face="Helvetica">124.2000</font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">2,207,390 </font> </nobr></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">275,347,808 </font> </nobr></td>
+</tr>
+
+<tr bgColor="#efefef">
+<td align="center"><font face="Helvetica" style="font-size: 11px" color="#424542">6 </font> </nobr></td>
+<td class="pointer" align="left" onclick="gotolink('SM ')" height="16" width="71" ><font face="Helvetica" style="font-size: 11px" color="blue">SM </font></td>
+<td align="right"><nobr><font face="Helvetica" style="font-size: 11px" color="green"><b>590.0000</b></font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="green">5.0000</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="green">0.85%</font></td>
+
+<td align="right"><font style="font-size: 11px" color="#424542" face="Helvetica">599.0000</font></td>
+<td align="right"><font style="font-size: 11px" color="#424542" face="Helvetica">585.0000</font></td>
+<td align="right"><font style="font-size: 11px" color="#424542" face="Helvetica">585.0000</font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">427,350 </font> </nobr></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">252,910,865 </font> </nobr></td>
+</tr>
+
+<tr bgColor="#ffffff">
+<td align="center"><font face="Helvetica" style="font-size: 11px" color="#424542">7 </font> </nobr></td>
+<td class="pointer" align="left" onclick="gotolink('BLOOM ')" height="16" width="71" ><font face="Helvetica" style="font-size: 11px" color="blue">BLOOM </font></td>
+<td align="right"><nobr><font face="Helvetica" style="font-size: 11px" color="green"><b>1.9000</b></font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="green">0.0500</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="green">2.70%</font></td>
+
+<td align="right"><font style="font-size: 11px" color="#424542" face="Helvetica">2.0500</font></td>
+<td align="right"><font style="font-size: 11px" color="#424542" face="Helvetica">1.8400</font></td>
+<td align="right"><font style="font-size: 11px" color="#424542" face="Helvetica">1.8400</font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">100,681,000 </font> </nobr></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">193,289,210 </font> </nobr></td>
+</tr>
+
+<tr bgColor="#efefef">
+<td align="center"><font face="Helvetica" style="font-size: 11px" color="#424542">8 </font> </nobr></td>
+<td class="pointer" align="left" onclick="gotolink('MBT ')" height="16" width="71" ><font face="Helvetica" style="font-size: 11px" color="blue">MBT </font></td>
+<td align="right"><nobr><font face="Helvetica" style="font-size: 11px" color="green"><b>65.1500</b></font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="green">0.0500</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="green">0.08%</font></td>
+
+<td align="right"><font style="font-size: 11px" color="#424542" face="Helvetica">65.8500</font></td>
+<td align="right"><font style="font-size: 11px" color="#424542" face="Helvetica">65.1500</font></td>
+<td align="right"><font style="font-size: 11px" color="#424542" face="Helvetica">65.4500</font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">2,906,170 </font> </nobr></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">190,255,550 </font> </nobr></td>
+</tr>
+
+<tr bgColor="#ffffff">
+<td align="center"><font face="Helvetica" style="font-size: 11px" color="#424542">9 </font> </nobr></td>
+<td class="pointer" align="left" onclick="gotolink('PLUS ')" height="16" width="71" ><font face="Helvetica" style="font-size: 11px" color="blue">PLUS </font></td>
+<td align="right"><nobr><font face="Helvetica" style="font-size: 11px" color="red"><b>11.3600</b></font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="red">-0.4800</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="red">-4.05%</font></td>
+
+<td align="right"><font style="font-size: 11px" color="#424542" face="Helvetica">12.2200</font></td>
+<td align="right"><font style="font-size: 11px" color="#424542" face="Helvetica">11.3200</font></td>
+<td align="right"><font style="font-size: 11px" color="#424542" face="Helvetica">12.0600</font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">15,021,900 </font> </nobr></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">174,798,930 </font> </nobr></td>
+</tr>
+
+<tr bgColor="#efefef">
+<td align="center"><font face="Helvetica" style="font-size: 11px" color="#424542">10 </font> </nobr></td>
+<td class="pointer" align="left" onclick="gotolink('CNVRG ')" height="16" width="71" ><font face="Helvetica" style="font-size: 11px" color="blue">CNVRG </font></td>
+<td align="right"><nobr><font face="Helvetica" style="font-size: 11px" color="red"><b>9.2000</b></font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="red">-0.1600</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="red">-1.71%</font></td>
+
+<td align="right"><font style="font-size: 11px" color="#424542" face="Helvetica">9.5500</font></td>
+<td align="right"><font style="font-size: 11px" color="#424542" face="Helvetica">9.1400</font></td>
+<td align="right"><font style="font-size: 11px" color="#424542" face="Helvetica">9.3600</font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">17,005,700 </font> </nobr></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">157,033,408 </font> </nobr></td>
+</tr>
+
+<tr bgColor="#ffffff">
+<td align="center"><font face="Helvetica" style="font-size: 11px" color="#424542">11 </font> </nobr></td>
+<td class="pointer" align="left" onclick="gotolink('AC ')" height="16" width="71" ><font face="Helvetica" style="font-size: 11px" color="blue">AC </font></td>
+<td align="right"><nobr><font face="Helvetica" style="font-size: 11px" color="green"><b>476.0000</b></font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="green">8.0000</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="green">1.71%</font></td>
+
+<td align="right"><font style="font-size: 11px" color="#424542" face="Helvetica">493.0000</font></td>
+<td align="right"><font style="font-size: 11px" color="#424542" face="Helvetica">470.0000</font></td>
+<td align="right"><font style="font-size: 11px" color="#424542" face="Helvetica">470.0000</font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">324,880 </font> </nobr></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">156,914,912 </font> </nobr></td>
+</tr>
+
+<tr bgColor="#efefef">
+<td align="center"><font face="Helvetica" style="font-size: 11px" color="#424542">12 </font> </nobr></td>
+<td class="pointer" align="left" onclick="gotolink('JFC ')" height="16" width="71" ><font face="Helvetica" style="font-size: 11px" color="blue">JFC </font></td>
+<td align="right"><nobr><font face="Helvetica" style="font-size: 11px" color="green"><b>145.8000</b></font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="green">2.3000</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="green">1.60%</font></td>
+
+<td align="right"><font style="font-size: 11px" color="#424542" face="Helvetica">146.5000</font></td>
+<td align="right"><font style="font-size: 11px" color="#424542" face="Helvetica">143.2000</font></td>
+<td align="right"><font style="font-size: 11px" color="#424542" face="Helvetica">143.5000</font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">1,064,310 </font> </nobr></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">154,669,282 </font> </nobr></td>
+</tr>
+
+<tr bgColor="#ffffff">
+<td align="center"><font face="Helvetica" style="font-size: 11px" color="#424542">13 </font> </nobr></td>
+<td class="pointer" align="left" onclick="gotolink('TEL ')" height="16" width="71" ><font face="Helvetica" style="font-size: 11px" color="blue">TEL </font></td>
+<td align="right"><nobr><font face="Helvetica" style="font-size: 11px" color="green"><b>1,163.0000</b></font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="green">7.0000</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="green">0.61%</font></td>
+
+<td align="right"><font style="font-size: 11px" color="#424542" face="Helvetica">1,184.0000</font></td>
+<td align="right"><font style="font-size: 11px" color="#424542" face="Helvetica">1,163.0000</font></td>
+<td align="right"><font style="font-size: 11px" color="#424542" face="Helvetica">1,165.0000</font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">129,395 </font> </nobr></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">151,674,860 </font> </nobr></td>
+</tr>
+
+<tr bgColor="#efefef">
+<td align="center"><font face="Helvetica" style="font-size: 11px" color="#424542">14 </font> </nobr></td>
+<td class="pointer" align="left" onclick="gotolink('MER ')" height="16" width="71" ><font face="Helvetica" style="font-size: 11px" color="blue">MER </font></td>
+<td align="right"><nobr><font face="Helvetica" style="font-size: 11px" color="green"><b>578.0000</b></font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="green">2.0000</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="green">0.35%</font></td>
+
+<td align="right"><font style="font-size: 11px" color="#424542" face="Helvetica">583.5000</font></td>
+<td align="right"><font style="font-size: 11px" color="#424542" face="Helvetica">576.0000</font></td>
+<td align="right"><font style="font-size: 11px" color="#424542" face="Helvetica">579.5000</font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">221,760 </font> </nobr></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">128,563,140 </font> </nobr></td>
+</tr>
+
+<tr bgColor="#ffffff">
+<td align="center"><font face="Helvetica" style="font-size: 11px" color="#424542">15 </font> </nobr></td>
+<td class="pointer" align="left" onclick="gotolink('SMPH ')" height="16" width="71" ><font face="Helvetica" style="font-size: 11px" color="blue">SMPH </font></td>
+<td align="right"><nobr><font face="Helvetica" style="font-size: 11px" color="green"><b>18.2400</b></font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="green">0.1400</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="green">0.77%</font></td>
+
+<td align="right"><font style="font-size: 11px" color="#424542" face="Helvetica">18.5200</font></td>
+<td align="right"><font style="font-size: 11px" color="#424542" face="Helvetica">18.1200</font></td>
+<td align="right"><font style="font-size: 11px" color="#424542" face="Helvetica">18.1200</font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">5,624,000 </font> </nobr></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">102,821,068 </font> </nobr></td>
+</tr>
+
+<tr bgColor="#efefef">
+<td align="center"><font face="Helvetica" style="font-size: 11px" color="#424542">16 </font> </nobr></td>
+<td class="pointer" align="left" onclick="gotolink('PGOLD ')" height="16" width="71" ><font face="Helvetica" style="font-size: 11px" color="blue">PGOLD </font></td>
+<td align="right"><nobr><font face="Helvetica" style="font-size: 11px" color="green"><b>39.3000</b></font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="green">0.1000</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="green">0.26%</font></td>
+
+<td align="right"><font style="font-size: 11px" color="#424542" face="Helvetica">39.5000</font></td>
+<td align="right"><font style="font-size: 11px" color="#424542" face="Helvetica">39.2000</font></td>
+<td align="right"><font style="font-size: 11px" color="#424542" face="Helvetica">39.2000</font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">1,978,000 </font> </nobr></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">77,738,735 </font> </nobr></td>
+</tr>
+
+<tr bgColor="#ffffff">
+<td align="center"><font face="Helvetica" style="font-size: 11px" color="#424542">17 </font> </nobr></td>
+<td class="pointer" align="left" onclick="gotolink('AEV ')" height="16" width="71" ><font face="Helvetica" style="font-size: 11px" color="blue">AEV </font></td>
+<td align="right"><nobr><font face="Helvetica" style="font-size: 11px" color="green"><b>32.9500</b></font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="green">0.2000</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="green">0.61%</font></td>
+
+<td align="right"><font style="font-size: 11px" color="#424542" face="Helvetica">33.5000</font></td>
+<td align="right"><font style="font-size: 11px" color="#424542" face="Helvetica">32.7500</font></td>
+<td align="right"><font style="font-size: 11px" color="#424542" face="Helvetica">32.7500</font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">1,931,700 </font> </nobr></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">63,883,760 </font> </nobr></td>
+</tr>
+
+<tr bgColor="#efefef">
+<td align="center"><font face="Helvetica" style="font-size: 11px" color="#424542">18 </font> </nobr></td>
+<td class="pointer" align="left" onclick="gotolink('MYNLD ')" height="16" width="71" ><font face="Helvetica" style="font-size: 11px" color="blue">MYNLD </font></td>
+<td align="right"><nobr><font face="Helvetica" style="font-size: 11px" color="#FF6600"><b>19.5200</b></font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#FF6600">0.0000</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#FF6600">0.00%</font></td>
+
+<td align="right"><font style="font-size: 11px" color="#424542" face="Helvetica">19.8800</font></td>
+<td align="right"><font style="font-size: 11px" color="#424542" face="Helvetica">19.5200</font></td>
+<td align="right"><font style="font-size: 11px" color="#424542" face="Helvetica">19.5200</font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">2,784,500 </font> </nobr></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">54,637,652 </font> </nobr></td>
+</tr>
+
+<tr bgColor="#ffffff">
+<td align="center"><font face="Helvetica" style="font-size: 11px" color="#424542">19 </font> </nobr></td>
+<td class="pointer" align="left" onclick="gotolink('GLO ')" height="16" width="71" ><font face="Helvetica" style="font-size: 11px" color="blue">GLO </font></td>
+<td align="right"><nobr><font face="Helvetica" style="font-size: 11px" color="green"><b>1,810.0000</b></font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="green">1.0000</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="green">0.06%</font></td>
+
+<td align="right"><font style="font-size: 11px" color="#424542" face="Helvetica">1,834.0000</font></td>
+<td align="right"><font style="font-size: 11px" color="#424542" face="Helvetica">1,810.0000</font></td>
+<td align="right"><font style="font-size: 11px" color="#424542" face="Helvetica">1,815.0000</font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">29,200 </font> </nobr></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">53,007,030 </font> </nobr></td>
+</tr>
+
+<tr bgColor="#efefef">
+<td align="center"><font face="Helvetica" style="font-size: 11px" color="#424542">20 </font> </nobr></td>
+<td class="pointer" align="left" onclick="gotolink('COSCO ')" height="16" width="71" ><font face="Helvetica" style="font-size: 11px" color="blue">COSCO </font></td>
+<td align="right"><nobr><font face="Helvetica" style="font-size: 11px" color="green"><b>8.5200</b></font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="green">0.2400</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="green">2.90%</font></td>
+
+<td align="right"><font style="font-size: 11px" color="#424542" face="Helvetica">8.5500</font></td>
+<td align="right"><font style="font-size: 11px" color="#424542" face="Helvetica">8.2600</font></td>
+<td align="right"><font style="font-size: 11px" color="#424542" face="Helvetica">8.2800</font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">6,250,500 </font> </nobr></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">52,776,359 </font> </nobr></td>
+</tr>
+
+<!--</TBODY>-->
+</table>
+
+</center>
+</div>
+
+</td>
+
+</tr>
+</table>
+</div>
+
+</form>
+</TD>
+</TR>
+</TABLE>
+
+</div>
+
+<script>setTdBackground();</script>
+
+</BODY>
+
+</HTML>
