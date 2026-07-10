@@ -107,6 +107,49 @@ def test_await_auth_never_probes_while_off_node(tmp_path, monkeypatch):
     assert not (tmp_path / "node").exists()
 
 
+def test_await_auth_restores_previous_pin_on_failure(tmp_path, monkeypatch):
+    """A failed handoff must not leave the manager pinned to the node the
+    redirect reached but never authenticated on — a caller surviving
+    LoginFailed would otherwise run on a pin that disagrees with the cache."""
+    cfg = Settings(node_cache_file=tmp_path / "node", auth_handoff_timeout_s=0.05)
+    mgr = SessionManager(cfg)
+    default_host = mgr._host
+    monkeypatch.setattr(time, "sleep", lambda s: None)
+    monkeypatch.setattr(mgr, "is_authenticated", lambda: False)
+
+    with pytest.raises(LoginFailed):
+        mgr._await_auth(_FakePage("https://ph1.colfinancial.com/ape/FINAL2_STARTER/HOME/HOME.asp"))
+
+    assert mgr._host == default_host
+    assert httpx.URL(str(mgr._client.base_url)).host == default_host
+    assert not (tmp_path / "node").exists()
+
+
+# -- cookie mirroring ------------------------------------------------------------
+
+
+def test_sync_cookies_replaces_stale_jar_entries():
+    """Mirror means replace: a parent-domain cookie left from a previous
+    login is a distinct jar entry a same-name host-only set() never
+    overwrites, and the jar would send both values to the new node."""
+
+    class _FakeContext:
+        def cookies(self, url):
+            return [
+                {"name": "SID", "value": "fresh", "domain": "ph1.colfinancial.com", "path": "/"}
+            ]
+
+    mgr = SessionManager()
+    mgr._pin("ph1.colfinancial.com")
+    mgr._client.cookies.set("SID", "stale", domain=".colfinancial.com", path="/")
+    mgr._context = _FakeContext()
+
+    mgr._sync_cookies()
+
+    jar = [(c.domain, c.name, c.value) for c in mgr._client.cookies.jar]
+    assert jar == [("ph1.colfinancial.com", "SID", "fresh")]
+
+
 # -- warm-start cache ------------------------------------------------------------
 
 

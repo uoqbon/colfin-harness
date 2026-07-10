@@ -101,11 +101,13 @@ class SessionManager:
         self._context = None
         self._stop_keepalive = threading.Event()
         self._keepalive_thread: threading.Thread | None = None
-        # Serializes keep-alive pings against relogin(): a re-login may re-pin
-        # to a new node mid-run, and a ping in flight across that re-pin would
-        # trip the escape check (stale host) or bounce off the new node before
-        # its cookie is synced — spurious warnings either way.
-        self._session_lock = threading.Lock()
+        # Serializes keep-alive pings against relogin() and cookie re-mirrors:
+        # a re-login may re-pin to a new node mid-run, and a ping in flight
+        # across that re-pin (or across a jar rebuild in _sync_cookies) would
+        # trip the escape check or go out with a torn cookie jar. Re-entrant
+        # because relogin holds it while _login → is_authenticated →
+        # _sync_cookies acquires it again on the same thread.
+        self._session_lock = threading.RLock()
 
     # -- node pinning ----------------------------------------------------------
 
@@ -256,7 +258,10 @@ class SessionManager:
         """Poll until the login redirect lands *page* on a phNN node and the
         session cookie authenticates there, on a short fuse so a wrong
         password fails fast. Pins and caches the discovered node as soon as it
-        appears. Never echoes the credentials."""
+        appears; restores the previous pin if the handoff fails, so a caller
+        that survives LoginFailed isn't left on a half-migrated pin that
+        disagrees with the node cache. Never echoes the credentials."""
+        previous = self._host
         deadline = time.monotonic() + self.config.auth_handoff_timeout_s
         while time.monotonic() < deadline:
             host = node_host(page.url)
@@ -268,6 +273,8 @@ class SessionManager:
                 logger.info("Session is live on %s.", host)
                 return
             time.sleep(2)
+        if self._host != previous:
+            self._pin(previous)
         raise LoginFailed(
             f"login did not authenticate within {self.config.auth_handoff_timeout_s:.0f}s — "
             "the user ID or password may be wrong, the login page changed, or the "
@@ -302,13 +309,23 @@ class SessionManager:
 
     def _sync_cookies(self) -> None:
         """Mirror the Playwright context's cookies (incl. HttpOnly session
-        cookie, which the browser API exposes to automation) into httpx."""
+        cookie, which the browser API exposes to automation) into httpx.
+
+        Mirror means *replace*, not merge: a cookie the browser has since
+        dropped or re-scoped (e.g. a parent-domain `.colfinancial.com` cookie
+        from a previous login next to the new host-only one — reachable once
+        a re-login re-pins to a different node) is a distinct jar entry that
+        `set()` would never overwrite, and the jar would send both values.
+        The lock keeps a keep-alive ping from going out mid-rebuild.
+        """
         if self._context is None:
             return
-        for cookie in self._context.cookies(self.node_base_url):
-            self._client.cookies.set(
-                cookie["name"], cookie["value"], domain=cookie["domain"], path=cookie["path"]
-            )
+        with self._session_lock:
+            self._client.cookies.jar.clear()
+            for cookie in self._context.cookies(self.node_base_url):
+                self._client.cookies.set(
+                    cookie["name"], cookie["value"], domain=cookie["domain"], path=cookie["path"]
+                )
 
     def fetch_fragment(self, path: str, params: Mapping[str, str] | None = None) -> str:
         """GET an HTML fragment, pinned to the discovered sticky node, with
