@@ -59,14 +59,24 @@ def resolve_model_id(value: str) -> str:
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_prefix="COLFIN_")
 
-    # ph45 is a sticky load-balancer node — the session cookie is only valid
-    # there, so every request must stay pinned to this host.
+    # Default sticky load-balancer node, used only until discovery. The node
+    # actually assigned varies per login (ph45 and ph1 have both been observed)
+    # and the session cookie is only valid on its own node, so the session
+    # layer discovers the real host from the post-login redirect and re-pins
+    # itself there (see SessionManager). This value is just the starting point
+    # for a cold cache.
     base_url: str = "https://ph45.colfinancial.com"
     app_root: str = "/ape/FINAL2_STARTER"
 
-    # Public login page. It lives on www (not the ph45 node) — the app on ph45
-    # only works once a session exists, so login starts here and hands the
-    # session off to ph45.
+    # Last node a session was pinned to, persisted so a warm profile is probed
+    # on the right node next run (a session minted on ph1 is invalid on ph45).
+    # Holds a single hostname — never credentials — and is validated against
+    # the phNN pattern before use.
+    node_cache_file: Path = Path.home() / ".colfin-harness" / "node"
+
+    # Public login page. It lives on www (not a phNN node) — the app only
+    # works once a session exists, so login starts here and hands the session
+    # off to the assigned node.
     login_url: str = "https://www.colfinancial.com/ape/Final2/home/HOME_NL_MAIN.asp"
 
     # mlx-community/gemma-4-12B-it-8bit. NOTE: HF metadata reports ~3.37B
@@ -103,8 +113,9 @@ class Settings(BaseSettings):
     # Login is automated now, but keep a visible window by default: the user
     # may want to watch, and the vision lane screenshots the live frameset.
     headless: bool = False
-    # Automated login authenticates in seconds; poll the cookie handoff to ph45
-    # on a short fuse so a wrong password fails fast instead of hanging.
+    # Automated login authenticates in seconds; poll the redirect onto the
+    # assigned node and the cookie handoff on a short fuse so a wrong password
+    # fails fast instead of hanging.
     auth_handoff_timeout_s: float = 30.0
     keepalive_interval_s: float = 240.0  # ping well inside the idle timeout
     request_timeout_s: float = 30.0
@@ -118,6 +129,8 @@ class Settings(BaseSettings):
 
     @property
     def home_url(self) -> str:
+        # Home on the *default* node. Once a session is live the manager pins
+        # to the discovered node and builds its own home URL from that host.
         return f"{self.base_url}{self.home_path}"
 
     @property

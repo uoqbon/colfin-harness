@@ -6,8 +6,10 @@ so the harness automates the login: it launches a *persistent* Chromium profile
 and, when the profile isn't already authenticated, fills the login form from
 in-memory `Credentials` and submits it. Once a session exists it:
 
-- exports the context's cookies into an httpx client pinned to the sticky
-  ph45 load-balancer node for fast HTML-fragment GETs;
+- discovers the sticky load-balancer node (phNN.colfinancial.com) the login
+  redirect landed on — the assigned node varies per login (ph45 and ph1 have
+  both been observed) — and exports the context's cookies into an httpx
+  client pinned to that node for fast HTML-fragment GETs;
 - keeps the session warm against the idle timeout with periodic pings;
 - detects logout in responses (the REPL can silently re-login from the held
   credentials);
@@ -20,6 +22,7 @@ login entirely and never needs them.
 """
 
 import logging
+import re
 import tempfile
 import threading
 import time
@@ -61,9 +64,30 @@ def looks_logged_out(fragment: str) -> bool:
     return any(marker in lowered for marker in LOGOUT_MARKERS)
 
 
+# Sticky load-balancer nodes look like phNN.colfinancial.com. Which node a
+# login is assigned varies (ph45 and ph1 have both been observed), so the node
+# is discovered from the post-login redirect rather than trusted from config.
+# The same pattern validates the persisted node cache, so a tampered cache
+# file cannot re-point the pinned client at an arbitrary host.
+_NODE_HOST_RE = re.compile(r"ph\d+\.colfinancial\.com")
+
+
+def node_host(url: str) -> str | None:
+    """The sticky ``phNN.colfinancial.com`` host of *url*, or None if the URL
+    is not on an app node (login page on www, blank page, garbage)."""
+    try:
+        host = httpx.URL(url).host
+    except Exception:
+        return None
+    host = (host or "").lower()
+    return host if _NODE_HOST_RE.fullmatch(host) else None
+
+
 class SessionManager:
     def __init__(self, config: Settings | None = None, credentials: Credentials | None = None):
         self.config = config or default_settings
+        # Provisional pin: the configured default node. start() re-pins to the
+        # cached node (warm profile) or the node discovered at login.
         self._host = httpx.URL(self.config.base_url).host
         self._login_host = httpx.URL(self.config.login_url).host
         self._credentials = credentials
@@ -78,15 +102,63 @@ class SessionManager:
         self._stop_keepalive = threading.Event()
         self._keepalive_thread: threading.Thread | None = None
 
+    # -- node pinning ----------------------------------------------------------
+
+    @property
+    def node_base_url(self) -> str:
+        """Base URL of the node the session is currently pinned to."""
+        return f"https://{self._host}"
+
+    @property
+    def _node_home_url(self) -> str:
+        return f"{self.node_base_url}{self.config.home_path}"
+
+    def _pin(self, host: str) -> None:
+        """Re-point the fast lane at *host*: fragment GETs, the keep-alive and
+        the NodePinningError escape check all follow the pinned host."""
+        self._host = host
+        self._client.base_url = self.node_base_url
+        self._client.headers["Referer"] = self._node_home_url
+
+    def _apply_cached_node(self) -> None:
+        """Pin to the node persisted by the previous login, if any. A warm
+        profile's session is only valid on the node that minted it, so probing
+        the configured default would falsely look logged-out after a node
+        change. Invalid or missing cache content is ignored."""
+        try:
+            cached = self.config.node_cache_file.read_text().strip()
+        except OSError:
+            return
+        host = node_host(f"https://{cached}/")
+        if host is None:
+            logger.warning(
+                "ignoring node cache %s: %r is not a phNN.colfinancial.com host",
+                self.config.node_cache_file,
+                cached,
+            )
+            return
+        if host != self._host:
+            logger.info("Using cached session node %s", host)
+            self._pin(host)
+
+    def _cache_node(self, host: str) -> None:
+        try:
+            self.config.node_cache_file.parent.mkdir(parents=True, exist_ok=True)
+            self.config.node_cache_file.write_text(f"{host}\n")
+        except OSError as exc:  # cache is an optimization; never fail login on it
+            logger.warning("could not persist session node to %s: %s",
+                           self.config.node_cache_file, exc)
+
     # -- lifecycle -----------------------------------------------------------
 
     def start(self, credential_provider: Callable[[], Credentials] | None = None) -> None:
         """Launch the persistent profile and ensure an authenticated session.
 
-        A warm profile goes straight to the app on ph45 and never needs
-        credentials. A cold profile triggers automated login: credentials come
-        from the constructor or, if absent, from ``credential_provider`` (called
-        lazily so the password is only requested when login is actually needed).
+        A warm profile goes straight to the app on its cached sticky node and
+        never needs credentials. A cold profile triggers automated login:
+        credentials come from the constructor or, if absent, from
+        ``credential_provider`` (called lazily so the password is only
+        requested when login is actually needed).
         """
         from playwright.sync_api import sync_playwright
 
@@ -98,8 +170,12 @@ class SessionManager:
             viewport={"width": 1280, "height": 900},
         )
         page = self._context.pages[0] if self._context.pages else self._context.new_page()
+        # Probe the node the previous login was pinned to — a warm session is
+        # invalid on any other node, so probing the default would force a
+        # needless re-login after a node change.
+        self._apply_cached_node()
         if self.is_authenticated():
-            page.goto(self.config.home_url)
+            page.goto(self._node_home_url)
         else:
             if self._credentials is None:
                 if credential_provider is None:
@@ -138,9 +214,12 @@ class SessionManager:
 
         The user ID's two halves go to txtUser1/txtUser2; the password to
         txtPassword. We submit by pressing Enter in the password field so the
-        form's natural submit path (default button / onsubmit) fires. On
-        success the page is moved onto the authenticated app so the vision lane
-        never lingers on the credential-bearing login page.
+        form's natural submit path (default button / onsubmit) fires. The
+        redirect lands the browser on the sticky phNN node assigned to this
+        login — that host is discovered, pinned, and cached before the cookie
+        handoff is confirmed. On success the page is moved onto the
+        authenticated app so the vision lane never lingers on the
+        credential-bearing login page.
         """
         creds = self._credentials
         if creds is None:  # defensive: start()/relogin() guarantee this
@@ -158,24 +237,33 @@ class SessionManager:
         # If the live page has no default submit button, switch this to clicking
         # the specific control or `page.locator("#login").evaluate("f=>f.submit()")`.
         page.press("#login input[name='txtPassword']", "Enter")
-        self._await_auth()
-        # Land on the app home page (ph45) — mirrors the warm-profile path and
-        # gets the browser off the login page before any screenshot tool can
-        # fire. Must be HOME/HOME.asp: the FINAL2_STARTER directory root 403s.
-        page.goto(self.config.home_url)
+        self._await_auth(page)
+        # Land on the app home page (on the discovered node) — mirrors the
+        # warm-profile path and gets the browser off the login page before any
+        # screenshot tool can fire. Must be HOME/HOME.asp: the FINAL2_STARTER
+        # directory root 403s.
+        page.goto(self._node_home_url)
 
-    def _await_auth(self) -> None:
-        """Poll until the session cookie authenticates against ph45, on a short
-        fuse so a wrong password fails fast. Never echoes the credentials."""
+    def _await_auth(self, page) -> None:
+        """Poll until the login redirect lands *page* on a phNN node and the
+        session cookie authenticates there, on a short fuse so a wrong
+        password fails fast. Pins and caches the discovered node as soon as it
+        appears. Never echoes the credentials."""
         deadline = time.monotonic() + self.config.auth_handoff_timeout_s
         while time.monotonic() < deadline:
-            if self.is_authenticated():
-                logger.info("Session is live.")
+            host = node_host(page.url)
+            if host is not None and host != self._host:
+                logger.info("Login assigned to node %s; pinning session there", host)
+                self._pin(host)
+            if host is not None and self.is_authenticated():
+                self._cache_node(host)
+                logger.info("Session is live on %s.", host)
                 return
             time.sleep(2)
         raise LoginFailed(
             f"login did not authenticate within {self.config.auth_handoff_timeout_s:.0f}s — "
-            "the user ID or password may be wrong, or the login page changed"
+            "the user ID or password may be wrong, the login page changed, or the "
+            "redirect never reached a phNN.colfinancial.com app node"
         )
 
     def relogin(self) -> None:
@@ -196,7 +284,7 @@ class SessionManager:
         except httpx.HTTPError:
             return False
         if response.status_code != 200 or response.url.host != self._host:
-            # Unauthenticated requests get bounced off the ph45 node.
+            # Unauthenticated requests get bounced off the sticky node.
             return False
         text = response.text.lower()
         return any(m in text for m in _AUTH_MARKERS) and not looks_logged_out(text)
@@ -208,13 +296,14 @@ class SessionManager:
         cookie, which the browser API exposes to automation) into httpx."""
         if self._context is None:
             return
-        for cookie in self._context.cookies(self.config.base_url):
+        for cookie in self._context.cookies(self.node_base_url):
             self._client.cookies.set(
                 cookie["name"], cookie["value"], domain=cookie["domain"], path=cookie["path"]
             )
 
     def fetch_fragment(self, path: str, params: Mapping[str, str] | None = None) -> str:
-        """GET an HTML fragment, pinned to ph45, with logout detection.
+        """GET an HTML fragment, pinned to the discovered sticky node, with
+        logout detection.
 
         Re-syncs the browser cookies first, so this touches the Playwright
         context and **must only be called from the main thread** (the sync API

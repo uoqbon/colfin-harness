@@ -5,8 +5,11 @@ Financial platform, captured for the agent harness.
 
 ## Platform context (shared by all agents)
 
-- **App style:** classic ASP frameset app under `https://ph45.colfinancial.com/ape/FINAL2_STARTER/`.
-  `ph45` is a sticky load-balancer node — the session is pinned to it.
+- **App style:** classic ASP frameset app under `https://phNN.colfinancial.com/ape/FINAL2_STARTER/`.
+  `phNN` is a sticky load-balancer node **assigned per login** (`ph45` and `ph1` have both
+  been observed) — the session is only valid on its own node. The harness discovers the
+  assigned node from the post-login redirect, pins all requests to it, and caches it
+  (`~/.colfin-harness/node`) for the next warm start.
 - **Auth:** server-side **HttpOnly session cookie** (not visible to JS, not in URLs).
   Every data endpoint is a plain `GET` that relies on the cookie being sent
   (`credentials: include`). There is **no token in the query string** and **no JSON API**.
@@ -87,6 +90,63 @@ Real scrubbed fixtures from this mapping: `tests/fixtures/stock_info.html`,
 `top_buyers.html`, `top_sellers.html`, `trade_prices.html`, `stock_info_invalid.html`
 (query strings stripped from attribute URLs; no account data appears on these pages).
 
+### Quotes tab — Market Information sub-tab — mapped 2026-07-10 from a live session
+
+Market-wide (not per-stock) surfaces. In the header frame, the Quotes sub-tabs live
+in `id="QR2"` (Stock Information · **Market Information** · Broker Information ·
+Calendar) and Market Information's row-3 menu in `id="QR3M"`: Summary ·
+Gainers & Losers · Most Active · Sectors (menu items call `getwin(33..36)`, which
+points `frames['main']` at the shell pages below).
+
+> Note: the mapping session was pinned to **`ph1`**.colfinancial.com, not `ph45` —
+> the sticky node assigned at login varies. Endpoints and markup are identical;
+> only the host differs. (The harness discovers and pins the assigned node
+> automatically — see the platform-context note above.)
+
+Each menu item loads a UI shell that wraps the real data page:
+
+| Menu item | Shell page(s) | Data endpoint (cookie-authenticated GET, no params) |
+|---|---|---|
+| Summary | `quotes/Pse_MarketIndex.asp` → `quotes/INDEX_AU.asp` (jQuery "Auto Update" poller) | `quotes/INDEX_AU_2DB.asp` |
+| Gainers & Losers | `quotes/PSE_GainerLoser.asp` (iframe) | `quotes/PSE_GainerLoser_2.asp` |
+| Most Active | `quotes/Pse_MostActive.asp` (iframe) | `quotes/Pse_MostActive_2.asp` |
+
+**Summary (`INDEX_AU_2DB.asp`):**
+- `id="mytable"`: Market Indices grid — header row `Index · Previous · Current ·
+  %Change · Change`, then 8 data rows: PSE Composite, All Shares, Financials,
+  Industrial, Holding Firms, Property, Service, Mining and Oil. Index-name cells
+  carry chart/composition icon links (`showChart('PCOMP')`, `showComp('PSEI')`, …).
+- **Positive %Change/Change print unsigned** — the `<font color=green|red>` on those
+  cells is the direction authority (several of those font tags are left unclosed;
+  parse tolerantly).
+- Breadth table (no id — anchor on the labels): `Total Trades`, `Total Value`,
+  `Total Volume`, `Up Volume`, `Down Volume`, `Unch Volume`, `Advances`,
+  `Declines`, `Unchanged` as 2-cell label/value rows.
+- A `Market Status: <text>` line sits above the grid (e.g. "Closed...").
+
+**Gainers & Losers (`PSE_GainerLoser_2.asp`):** two side-by-side 21-row tables —
+`id="mytable"` = Top Gainers, `id="mytable2"` = Top Losers — each header +
+20 data rows of 6 cells: `# · Stock Code · Last · Change · %Change · Value`.
+Losers carry explicit minus signs (color is decoration only). Markup quirks:
+each table arrives wrapped in its own nested `<html><body>` inside a `<td>`,
+there's a stray `</TBODY>` and a malformed `</tr`, and ticker cells have a
+trailing space. Pre-open, the tables render headers only (a legitimate empty
+result).
+
+**Most Active (`Pse_MostActive_2.asp`):** "20 MOST ACTIVE STOCKS BY TRADE VALUE" —
+one `id="mytable"`, header + 20 data rows of 10 cells: `# · Stock Code · Last ·
+Change · %Change · High · Low · Open · Volume · Value`. Signs are explicit;
+unchanged stocks render `0.0000` in `#FF6600` (neither red nor green).
+
+**Adjacent, not yet mapped:** Sectors (`quotes/Pse_Prices.asp`), per-index
+constituents (`quotes/ByIndexName_2.asp?IndexName=…&SortBy=…&N=…`, linked from the
+Summary grid), index charts (`quotes/INDEXCHARTS.asp?varstock=…`), and
+capitalization (`quotes/pse_capitalization.asp?stock=…`).
+
+Real scrubbed fixtures from this mapping: `tests/fixtures/market_summary.html`,
+`gainers_losers.html`, `most_active.html` (query strings stripped from attribute
+URLs; these pages carry no account data).
+
 ---
 
 ## Agent 2 — Portfolio / Account Summary (read-only)
@@ -164,8 +224,8 @@ Synthetic fixtures from this mapping: `tests/fixtures/tech_guide.html`,
    required once a session cookie exists. This is the efficient path; the frame/UI route is
    the fallback for debugging.
 2. **Session management is the central concern:** capture the HttpOnly cookie from a
-   logged-in browser, keep it warm against the idle timeout, pin requests to the `ph45`
-   node, and detect logout. Login is automated (no captcha/2FA): the harness fills the
+   logged-in browser, keep it warm against the idle timeout, pin requests to the sticky
+   `phNN` node discovered at login, and detect logout. Login is automated (no captcha/2FA): the harness fills the
    `id="login"` form from in-memory credentials, so a detected logout can be re-authed
    without a human.
 3. **Parsing should be position/anchor based**, tolerant of the legacy ASP markup
