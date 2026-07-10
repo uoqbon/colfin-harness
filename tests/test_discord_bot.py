@@ -90,6 +90,15 @@ def test_empty_text_yields_no_chunks():
     assert chunk_message("") == []
 
 
+def test_exactly_limit_is_one_chunk():
+    assert chunk_message("x" * DISCORD_MESSAGE_LIMIT) == ["x" * DISCORD_MESSAGE_LIMIT]
+
+
+def test_one_over_limit_splits_hard_at_limit():
+    text = "x" * (DISCORD_MESSAGE_LIMIT + 1)
+    assert chunk_message(text) == ["x" * DISCORD_MESSAGE_LIMIT, "x"]
+
+
 # --- allowlist parsing from Settings ----------------------------------------
 
 

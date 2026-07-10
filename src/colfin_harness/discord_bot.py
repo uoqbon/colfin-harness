@@ -69,7 +69,9 @@ def strip_bot_mention(content: str, bot_user_id: int) -> str:
 
 def chunk_message(text: str, limit: int = DISCORD_MESSAGE_LIMIT) -> list[str]:
     """Split ``text`` into ≤``limit``-char chunks, breaking on newlines when
-    possible. Concatenating the chunks reproduces ``text`` exactly."""
+    possible. Concatenating the chunks reproduces ``text`` exactly. (The send
+    path additionally drops whitespace-only chunks — Discord rejects them —
+    so the on-wire reply may omit pathological all-whitespace runs.)"""
     chunks: list[str] = []
     while len(text) > limit:
         split = text.rfind("\n", 0, limit)
@@ -97,7 +99,7 @@ class ColfinDiscordBot(discord.Client):
         turn_lock: threading.Lock,
         allowlist: frozenset[int],
         intents: discord.Intents,
-        turn_executor: ThreadPoolExecutor | None = None,
+        turn_executor: ThreadPoolExecutor,
     ) -> None:
         super().__init__(intents=intents)
         self._orchestrator = orchestrator
@@ -105,14 +107,12 @@ class ColfinDiscordBot(discord.Client):
         self._turn_lock = turn_lock
         self._allowlist = allowlist
         self._histories: dict[int, list[Turn]] = {}
-        # Turns MUST run on the process-wide turn executor: sync Playwright is
-        # thread-affine, so screenshots and relogin only work on the thread
-        # that started the session (__main__ owns that executor and started
-        # the session on it). The single worker also serializes turns before
-        # the lock is ever contended.
-        self._executor = turn_executor or ThreadPoolExecutor(
-            max_workers=1, thread_name_prefix="discord-turn"
-        )
+        # Required, never defaulted: turns MUST run on the process-wide turn
+        # executor — sync Playwright is thread-affine, so screenshots and
+        # relogin only work on the thread that started the session (__main__
+        # owns that executor and started the session on it). A private
+        # fallback pool would silently reintroduce the wrong-thread bug.
+        self._executor = turn_executor
 
     async def on_ready(self) -> None:
         logger.info("Discord bot connected as %s (allowlist: %d user(s))",
@@ -149,9 +149,13 @@ class ColfinDiscordBot(discord.Client):
             )
             return
         # Text only, ever — no embeds, images, or file attachments.
+        # Whitespace-only chunks are dropped: Discord rejects them outright.
         chunks = [c for c in chunk_message(answer) if c.strip()]
-        for chunk in chunks or ["(no answer)"]:
-            await message.channel.send(chunk)
+        try:
+            for chunk in chunks or ["(no answer)"]:
+                await message.channel.send(chunk)
+        except Exception:  # e.g. permissions/rate-limit; the turn itself succeeded
+            logger.exception("failed to deliver Discord reply")
 
     def _run_turn(self, channel_id: int, task: str) -> str:
         # Runs on the single turn-executor thread, under the lock shared with
@@ -171,14 +175,14 @@ def run_discord_bot(
     session,
     turn_lock: threading.Lock,
     settings: Settings,
-    turn_executor: ThreadPoolExecutor | None = None,
+    turn_executor: ThreadPoolExecutor,
 ) -> None:
     """Run the Discord client in the *current* thread until it stops.
 
     ``__main__`` calls this from a daemon background thread, so it creates its
     own event loop rather than using ``Client.run`` (which assumes the main
     thread for signal handling). ``turn_executor`` must be the process-wide
-    turn executor when the session's Playwright was started on it.
+    single-worker executor the session's Playwright was started on.
     """
     allowlist = settings.discord_allowed_user_ids
     if not allowlist:

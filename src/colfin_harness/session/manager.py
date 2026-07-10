@@ -217,9 +217,11 @@ class SessionManager:
         """GET an HTML fragment, pinned to ph45, with logout detection.
 
         Re-syncs the browser cookies first, so this touches the Playwright
-        context and **must only be called from the main thread** (the sync API
-        is bound to the greenlet that created it). The background keep-alive
-        uses the httpx-only path instead.
+        context and **must only be called from the thread that ran start()**
+        (the sync API is bound to the greenlet that created it) — in the CLI
+        that is the single turn-executor thread owned by ``__main__``, which
+        all REPL and Discord turns run on. The background keep-alive uses the
+        httpx-only path instead.
         """
         self._sync_cookies()
         return self._get_fragment(path, params)

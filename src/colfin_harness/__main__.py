@@ -90,14 +90,19 @@ def run_repl(
             continue
         if task.lower() == "exit":
             break
-        try:
+        # The lock is acquired INSIDE the executor task, never on the main
+        # thread around submit(): holding it while waiting on the single
+        # worker deadlocks if a Discord turn already occupies that worker
+        # blocked on the same lock.
+        def _locked_turn(task: str = task) -> str:
             with turn_lock:
-                if turn_executor is not None:
-                    answer = turn_executor.submit(
-                        answer_task, orchestrator, session, task, history
-                    ).result()
-                else:
-                    answer = answer_task(orchestrator, session, task, history)
+                return answer_task(orchestrator, session, task, history)
+
+        try:
+            if turn_executor is not None:
+                answer = turn_executor.submit(_locked_turn).result()
+            else:
+                answer = _locked_turn()
         except (SessionExpired, LoginFailed) as exc:
             print(f"Re-login failed: {exc}")
             break
@@ -188,6 +193,10 @@ def main() -> int:
     # and Discord alike), and teardown — runs on this single-worker executor,
     # which also makes turn serialization structural, not just lock-enforced.
     turn_executor = ThreadPoolExecutor(max_workers=1, thread_name_prefix="colfin-turn")
+    # One lock for ALL front-ends: REPL and Discord turns never overlap on the
+    # single browser session/model server. Created before the try so the
+    # teardown in finally can always reference it.
+    turn_lock = threading.Lock()
     try:
         # The provider is invoked lazily, only when the profile is cold, so a
         # warm session never prompts for a password (the prompt reads stdin
@@ -204,9 +213,6 @@ def main() -> int:
         )
         orchestrator = Orchestrator(runtime, registry)
         runtime.ensure_server()  # warm the model before the first question
-        # One lock for ALL front-ends: REPL and Discord turns never overlap on
-        # the single browser session/model server.
-        turn_lock = threading.Lock()
         if discord_token is not None:
             from colfin_harness.discord_bot import run_discord_bot
 
@@ -221,9 +227,14 @@ def main() -> int:
         # Teardown queues on the turn executor behind any in-flight Discord
         # turn, so the session is never closed under a running turn — and it
         # runs on the Playwright-owning thread, which sync Playwright requires.
+        # It also takes turn_lock, so no lock-holding turn anywhere can overlap
+        # it. A turn submitted *after* teardown is either cancelled by the
+        # shutdown below or fails against the closed session and is caught by
+        # the bot's error handling — benign, since the process is exiting.
         def _teardown() -> None:
-            session.clear_credentials()
-            session.close()
+            with turn_lock:
+                session.clear_credentials()
+                session.close()
 
         try:
             turn_executor.submit(_teardown).result()
