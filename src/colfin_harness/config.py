@@ -1,5 +1,6 @@
 """Harness configuration. All values overridable via COLFIN_* env vars."""
 
+import logging
 from pathlib import Path
 
 from pydantic import field_validator
@@ -108,6 +109,35 @@ class Settings(BaseSettings):
     auth_handoff_timeout_s: float = 30.0
     keepalive_interval_s: float = 240.0  # ping well inside the idle timeout
     request_timeout_s: float = 30.0
+
+    # Discord front-end allowlist: comma-separated user-ID snowflakes
+    # (COLFIN_DISCORD_ALLOWED_USERS). Empty means the bot answers no one —
+    # it fails closed. The bot *token* is deliberately NOT a setting: env vars
+    # leak into the model-server subprocess, so it comes from the macOS
+    # Keychain only (see keychain.py).
+    discord_allowed_users: str = ""
+
+    @property
+    def discord_allowed_user_ids(self) -> frozenset[int]:
+        """The allowlist parsed to user IDs; blank entries are ignored.
+
+        Non-numeric entries are skipped with a warning rather than raised —
+        a typo must not crash the bot thread, and skipping fails closed.
+        """
+        ids: set[int] = set()
+        for part in self.discord_allowed_users.split(","):
+            part = part.strip()
+            if not part:
+                continue
+            try:
+                ids.add(int(part))
+            except ValueError:
+                logging.getLogger(__name__).warning(
+                    "ignoring invalid COLFIN_DISCORD_ALLOWED_USERS entry %r "
+                    "(expected a numeric Discord user ID)",
+                    part,
+                )
+        return frozenset(ids)
 
     # App landing page. Requesting the FINAL2_STARTER directory root itself
     # (app_root + "/") returns a 403 — there is no directory index — so all

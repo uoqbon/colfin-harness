@@ -78,6 +78,17 @@ needs an automated login.
 uv run python -m colfin_harness --headless --user 1234-5678
 ```
 
+### Discord bot front-end (optional)
+
+The harness can also answer over Discord, using the same orchestrator and session as the
+REPL (turns are strictly serialized across both). It **auto-starts iff** a bot token
+exists in the macOS Keychain (`security add-generic-password -s colfin-discord-bot -a bot
+-w`) and answers only user IDs allowlisted in `COLFIN_DISCORD_ALLOWED_USERS` — an empty
+allowlist answers no one. Force it on/off with `--discord` / `--no-discord`. The bot
+sends **text only** (never screenshots or attachments), and the token is read from the
+Keychain at runtime — never from env vars, config, or disk. Setup, allowlisting, and
+privacy notes: [docs/discord-bot.md](docs/discord-bot.md).
+
 ### Choosing the model
 
 The vision model is configurable, but **locked to the Google Gemma family on MLX** — the
