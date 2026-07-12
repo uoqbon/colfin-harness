@@ -15,7 +15,7 @@ from colfin_harness.orchestrator import Turn
 
 logger = logging.getLogger(__name__)
 
-# Bound the carried context so it can't blow the 12B model's window: keep the
+# Bound the carried context so it can't blow the model's window: keep the
 # most recent turns within a turn-count and a rough char budget, oldest first.
 MAX_HISTORY_TURNS = 6
 MAX_HISTORY_CHARS = 6000

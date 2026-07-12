@@ -74,9 +74,11 @@ Keychain (`security add-generic-password -s colfin-discord-bot -a bot -w`); forc
   `python -m mlx_vlm.server` if none is running (reusing a warm one, stopping only one it
   spawned), and `VLMRuntime.generate` POSTs text+base64-image chat completions over httpx,
   keeping the `generate(prompt, images=[]) -> str` signature the orchestrator expects.
-  Serving out-of-process means the ~12.7 GB of weights load once and survive across runs.
-  The HF metadata for `gemma-4-12B-it-8bit` claims ~3.37B params; the weights on disk are
-  actually ~12.7 GB (real 12B at 8-bit). Don't "correct" code comments to match the HF metadata.
+  Serving out-of-process means the ~8.9 GB of weights load once and survive across runs.
+  The HF metadata for the default `gemma-4-e4b-it-8bit` claims ~2.57B params; the weights on
+  disk are actually ~8.9 GB (the E-series is a MatFormer/elastic checkpoint larger than its
+  effective param count). The `gemma-12b` alias is a heavier ~12.7 GB sibling whose own HF
+  metadata under-reports similarly. Don't "correct" code comments to match the HF metadata.
   The `model_id` is configurable (`--model` / `COLFIN_MODEL_ID`, plus short aliases in
   `config.py:GEMMA_MLX_MODELS`) but **locked to the Google Gemma family on MLX** by
   `config.py:resolve_model_id` — a `field_validator` guards the default/env/constructor and

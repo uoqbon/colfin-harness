@@ -13,7 +13,7 @@
 A local multi-agent harness for the [COL Financial](https://www.colfinancial.com) online
 trading platform, driven by a Google Gemma vision-language model running on Apple Silicon
 via [mlx-vlm](https://github.com/Blaizzy/mlx-vlm). The model is configurable within the
-Gemma-on-MLX family — `mlx-community/gemma-4-12B-it-8bit` is the default, and any Gemma
+Gemma-on-MLX family — `mlx-community/gemma-4-e4b-it-8bit` is the default, and any Gemma
 build published for MLX works (see [Choosing the model](#choosing-the-model)).
 
 The platform is a classic ASP frameset app with no JSON API: data endpoints are plain
@@ -37,11 +37,12 @@ VLM for ambiguous UI/state). See [docs/read-only-agents.md](docs/read-only-agent
 
 - Apple Silicon Mac, with enough unified memory for whichever Gemma model you run
   (see [Choosing the model](#choosing-the-model)). **RAM note for the default,**
-  `gemma-4-12B-it-8bit`**:** Hugging Face metadata claims ~3.37B params, but the
-  safetensors on disk total **~12.7 GB** (verified against the repo's shards) — it is a
-  real 12B model at 8-bit. 16 GB unified memory is the floor; 24 GB+ recommended. Lighter
-  quants (`…-4bit`/`…-6bit`) need less; larger Gemma variants (e.g. `gemma-4-31b-it-*`)
-  need more.
+  `gemma-4-e4b-it-8bit`**:** Hugging Face metadata claims ~2.57B params, but the
+  safetensors on disk total **~8.9 GB** (verified against the repo's shards) — the
+  E-series is a MatFormer/elastic checkpoint larger than its effective param count
+  suggests. 12 GB unified memory is workable; 16 GB+ recommended. Lighter quants
+  (`…-4bit`/`…-6bit`) need less; heavier variants (the `gemma-12b` alias at ~12.7 GB, or
+  `gemma-4-31b-it-*`) need more.
 - Python 3.11–3.13 (managed via [uv](https://docs.astral.sh/uv/); `.python-version` pins 3.12).
 - A COL Financial account. Login is automated from credentials you enter at runtime; they
   are held in process memory only and never written to disk (see
@@ -103,11 +104,12 @@ rejected rather than silently mis-served. Select one with `--model` (equivalentl
 
 ```bash
 uv run python -m colfin_harness --list-models          # show built-in aliases
-uv run python -m colfin_harness --model gemma-12b       # a short alias
+uv run python -m colfin_harness --model gemma-12b       # a short alias (heavier sibling)
 uv run python -m colfin_harness --model mlx-community/gemma-4-12B-it-4bit   # any Gemma-on-MLX repo
 ```
 
-`--model` accepts either a built-in alias (e.g. `gemma-12b` → the default
+`--model` accepts either a built-in alias (e.g. `gemma-e4b` → the default
+`mlx-community/gemma-4-e4b-it-8bit`, or `gemma-12b` → the heavier
 `mlx-community/gemma-4-12B-it-8bit`) or any full Gemma repo published for MLX (an
 `mlx-community/…gemma…` repo, or another id carrying `mlx`). Lighter quants
 (`…-4bit`/`…-6bit`) trade accuracy for a smaller RAM footprint; larger siblings
@@ -117,7 +119,7 @@ front. Whichever you pick must be one `mlx_vlm.server` can serve — see the RAM
 ### The model server lifecycle
 
 The model runs out-of-process in a local `mlx_vlm.server`, and **by default it keeps
-running after you exit** the REPL. This is intentional: the ~12.7 GB of weights stay
+running after you exit** the REPL. This is intentional: the ~8.9 GB of weights stay
 loaded, so the next run reuses the warm server instead of paying the cold start again. On
 startup the harness health-checks the address (`127.0.0.1:8080`), reuses a warm server if
 one is up, and spawns one only if none is.

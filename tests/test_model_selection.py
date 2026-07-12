@@ -19,7 +19,14 @@ LOCK_MSG = "locked to the Google Gemma family"
 # --- resolve_model_id: alias resolution + the Gemma+MLX guard ----------------
 
 def test_alias_resolves_to_full_repo():
-    assert resolve_model_id("gemma-12b") == DEFAULT_MODEL_ID
+    assert resolve_model_id("gemma-e4b") == DEFAULT_MODEL_ID
+
+
+def test_non_default_alias_resolves_to_its_own_repo():
+    # A registered alias need not be the default — gemma-12b points at the
+    # heavier sibling, not DEFAULT_MODEL_ID.
+    assert resolve_model_id("gemma-12b") == "mlx-community/gemma-4-12B-it-8bit"
+    assert resolve_model_id("gemma-12b") != DEFAULT_MODEL_ID
 
 
 def test_default_is_a_registered_alias_target():
@@ -29,13 +36,13 @@ def test_default_is_a_registered_alias_target():
 
 
 def test_resolver_trims_surrounding_whitespace():
-    assert resolve_model_id("  gemma-12b  ") == DEFAULT_MODEL_ID
+    assert resolve_model_id("  gemma-e4b  ") == DEFAULT_MODEL_ID
 
 
 @pytest.mark.parametrize(
     "repo",
     [
-        "mlx-community/gemma-4-12B-it-8bit",  # the default
+        "mlx-community/gemma-4-e4b-it-8bit",  # the default
         "mlx-community/gemma-4-12B-it-4bit",  # lighter quant
         "mlx-community/gemma-4-31b-it-8bit",  # larger sibling
         "mlx-community/gemma-4-e4b-it-4bit",  # small edge variant
@@ -69,7 +76,7 @@ def test_settings_default_is_valid():
 
 
 def test_settings_resolves_alias_on_construction():
-    assert Settings(model_id="gemma-12b").model_id == DEFAULT_MODEL_ID
+    assert Settings(model_id="gemma-e4b").model_id == DEFAULT_MODEL_ID
 
 
 def test_settings_accepts_full_gemma_mlx_repo():
@@ -90,7 +97,7 @@ def test_env_var_override_is_locked(monkeypatch):
 
 
 def test_env_var_alias_resolves(monkeypatch):
-    monkeypatch.setenv("COLFIN_MODEL_ID", "gemma-12b")
+    monkeypatch.setenv("COLFIN_MODEL_ID", "gemma-e4b")
     assert Settings().model_id == DEFAULT_MODEL_ID
 
 
@@ -101,7 +108,7 @@ def test_resolve_settings_no_overrides_returns_base():
 
 
 def test_resolve_settings_applies_model_alias():
-    resolved = cli.resolve_settings(None, "gemma-12b")
+    resolved = cli.resolve_settings(None, "gemma-e4b")
     assert resolved.model_id == DEFAULT_MODEL_ID
     assert resolved is not cli.default_settings  # a copy, base untouched
     assert cli.default_settings.model_id == DEFAULT_MODEL_ID

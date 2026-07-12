@@ -78,7 +78,7 @@ password is still prompted at the terminal on a cold profile.
 - **DM the bot**, or **@-mention it** in a channel it can read.
 - Each channel (and each DM) keeps its own conversation history, trimmed to the
   same bounds as the REPL.
-- Turns are slow (tens of seconds on the local 12B model) and strictly
+- Turns are slow (tens of seconds on the local Gemma model) and strictly
   serialized across Discord and the REPL — the bot shows a typing indicator
   while it works.
 - Long answers are split at Discord's 2000-character message limit.
