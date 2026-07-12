@@ -335,12 +335,21 @@ class SessionManager:
         page.goto(self._node_home_url)
 
     def _await_auth(self, page) -> None:
-        """Poll until the login redirect lands *page* on a phNN node and the
-        session cookie authenticates there, on a short fuse so a wrong
-        password fails fast. Pins and caches the discovered node as soon as it
-        appears; restores the previous pin if the handoff fails, so a caller
-        that survives LoginFailed isn't left on a half-migrated pin that
-        disagrees with the node cache. Never echoes the credentials."""
+        """Poll until the login authenticates, on a short fuse so a wrong
+        password fails fast.
+
+        The post-login redirect URL is the authoritative node signal: when the
+        page lands on a phNN host, that node is pinned and cached. But the
+        navigation is client-JS driven and can fail while the cookie handoff
+        itself succeeded (observed headless 2026-07-13: session live, page
+        parked on www) — so when the page stays off-node, the CURRENT pin is
+        probed as a fallback. A successful probe is safe to accept: it demands
+        a 200 from the pinned host without redirecting off it, which the
+        sticky-node cookie only produces on the right node. A new node is
+        still never pinned from a probe — only from the redirect. Restores the
+        previous pin if the handoff fails, so a caller that survives
+        LoginFailed isn't left on a half-migrated pin that disagrees with the
+        node cache. Never echoes the credentials."""
         previous = self._host
         deadline = time.monotonic() + self.config.auth_handoff_timeout_s
         while time.monotonic() < deadline:
@@ -348,9 +357,16 @@ class SessionManager:
             if host is not None and host != self._host:
                 logger.info("Login assigned to node %s; pinning session there", host)
                 self._pin(host)
-            if host is not None and self.is_authenticated():
-                self._cache_node(host)
-                logger.info("Session is live on %s.", host)
+            if self.is_authenticated():
+                self._cache_node(self._host)
+                if host is None:
+                    logger.info(
+                        "Session is live on %s although the browser page stayed on %s — "
+                        "accepting the cookie handoff (the client-side redirect never ran).",
+                        self._host, _url_host(page.url),
+                    )
+                else:
+                    logger.info("Session is live on %s.", self._host)
                 return
             logger.debug("login handoff pending; browser page is on %s", _url_host(page.url))
             time.sleep(2)
