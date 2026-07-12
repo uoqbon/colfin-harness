@@ -353,7 +353,10 @@ class SessionManager:
         previous = self._host
         deadline = time.monotonic() + self.config.auth_handoff_timeout_s
         while time.monotonic() < deadline:
-            host = node_host(page.url)
+            # Read the URL once per poll: the page navigates concurrently, and
+            # two reads in one iteration can describe two different pages.
+            page_url = page.url
+            host = node_host(page_url)
             if host is not None and host != self._host:
                 logger.info("Login assigned to node %s; pinning session there", host)
                 self._pin(host)
@@ -361,14 +364,15 @@ class SessionManager:
                 self._cache_node(self._host)
                 if host is None:
                     logger.info(
-                        "Session is live on %s although the browser page stayed on %s — "
-                        "accepting the cookie handoff (the client-side redirect never ran).",
-                        self._host, _url_host(page.url),
+                        "Session is live on %s while the browser page is still on %s — "
+                        "accepting the cookie handoff without waiting for the "
+                        "client-side navigation.",
+                        self._host, _url_host(page_url),
                     )
                 else:
                     logger.info("Session is live on %s.", self._host)
                 return
-            logger.debug("login handoff pending; browser page is on %s", _url_host(page.url))
+            logger.debug("login handoff pending; browser page is on %s", _url_host(page_url))
             time.sleep(2)
         if self._host != previous:
             self._pin(previous)
