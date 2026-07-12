@@ -1,15 +1,16 @@
-"""Local VLM runtime: mlx-community/gemma-4-12B-it-8bit served by mlx_vlm.server.
+"""Local VLM runtime: mlx-community/gemma-4-e4b-it-8bit served by mlx_vlm.server.
 
 The model is hosted out-of-process by ``python -m mlx_vlm.server``, which
-exposes an OpenAI-compatible HTTP API. Serving it once means the ~12.7 GB of
+exposes an OpenAI-compatible HTTP API. Serving it once means the ~8.9 GB of
 weights load a single time and are reused across harness runs instead of being
 re-loaded on every invocation.
 
 RAM sizing — verified against the HF repo: although the Hub metadata reports
-~3.37B params, the safetensors shards on disk total ~12.7 GB, i.e. this is a
-genuine 12B model at 8-bit. Expect ~13 GB resident for weights plus KV cache:
-16 GB unified memory is the floor; 24 GB+ is comfortable. (Don't "correct"
-this to match the HF metadata.)
+~2.57B params, the safetensors shards on disk total ~8.9 GB — the E-series is a
+MatFormer/elastic checkpoint larger than its effective param count suggests.
+Expect ~10 GB resident for weights plus KV cache: 12 GB unified memory is
+workable; 16 GB+ is comfortable. (Don't "correct" the size to match the HF
+metadata.) The heavier ``gemma-12b`` alias roughly doubles these figures.
 
 Nothing here touches the network or imports mlx at construction time, so the
 parsers, orchestrator, and their tests stay fully offline — the server is
@@ -96,7 +97,7 @@ class MLXServerManager:
 
     def _spawn(self) -> None:
         logger.info(
-            "Starting mlx_vlm.server for %s on %s (first run loads ~12.7 GB of weights)…",
+            "Starting mlx_vlm.server for %s on %s (first run downloads and loads the weights)…",
             self.config.model_id,
             self.base_url,
         )

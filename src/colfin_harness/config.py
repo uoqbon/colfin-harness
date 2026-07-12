@@ -11,14 +11,15 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 # protocol is tuned for Gemma's lack of native function calling, and the runtime
 # only knows how to drive an `mlx_vlm.server`. The model is configurable *within*
 # that box — see `resolve_model_id` — but cannot leave it.
-DEFAULT_MODEL_ID = "mlx-community/gemma-4-12B-it-8bit"
+DEFAULT_MODEL_ID = "mlx-community/gemma-4-e4b-it-8bit"
 
 # Curated short aliases for known-good Gemma vision models on MLX, so callers can
-# say `--model gemma-12b` instead of the full repo id. This is intentionally
+# say `--model gemma-e4b` instead of the full repo id. This is intentionally
 # minimal — the guard in `resolve_model_id` accepts any Gemma-on-MLX repo, so new
 # variants don't need an alias to be usable; add one here only for convenience.
 GEMMA_MLX_MODELS: dict[str, str] = {
-    "gemma-12b": DEFAULT_MODEL_ID,  # ~12.7 GB on disk, 8-bit; 16 GB RAM floor
+    "gemma-e4b": DEFAULT_MODEL_ID,  # ~8.9 GB on disk, 8-bit; the default
+    "gemma-12b": "mlx-community/gemma-4-12B-it-8bit",  # ~12.7 GB on disk; heavier sibling
 }
 
 
@@ -80,12 +81,13 @@ class Settings(BaseSettings):
     # off to the assigned node.
     login_url: str = "https://www.colfinancial.com/ape/Final2/home/HOME_NL_MAIN.asp"
 
-    # mlx-community/gemma-4-12B-it-8bit. NOTE: HF metadata reports ~3.37B
-    # params, but the safetensors on disk total ~12.7 GB (3 shards) —
-    # consistent with a real 12B model at 8-bit. Size RAM for ~13 GB of
-    # weights: 16 GB unified memory is the floor, 24 GB+ comfortable.
+    # mlx-community/gemma-4-e4b-it-8bit. NOTE: HF metadata reports ~2.57B
+    # params, but the safetensors on disk total ~8.9 GB (2 shards) — the
+    # E-series is a MatFormer/elastic checkpoint that is larger than its
+    # effective param count suggests. Size RAM for ~10 GB of weights plus KV
+    # cache: 12 GB unified memory is workable, 16 GB+ comfortable.
     # Configurable via COLFIN_MODEL_ID (or --model), but locked to a Gemma-on-MLX
-    # repo by the validator below; aliases like "gemma-12b" resolve to a full id.
+    # repo by the validator below; aliases like "gemma-e4b" resolve to a full id.
     model_id: str = DEFAULT_MODEL_ID
 
     @field_validator("model_id")
@@ -94,13 +96,13 @@ class Settings(BaseSettings):
         return resolve_model_id(value)
 
     # The model is served out-of-process by `python -m mlx_vlm.server` so the
-    # ~12.7 GB of weights load once and are reused across runs. The harness
+    # ~8.9 GB of weights load once and are reused across runs. The harness
     # health-checks this address and spawns a server only if none is running.
     model_server_host: str = "127.0.0.1"
     model_server_port: int = 8080
-    # Cold start loads ~12.7 GB of weights — be generous before giving up.
+    # Cold start loads ~8.9 GB of weights — be generous before giving up.
     model_server_startup_timeout_s: float = 180.0
-    # Generation on a 12B model is slow; kept separate from the 30s fragment
+    # Local VLM generation is slow; kept separate from the 30s fragment
     # GET timeout (request_timeout_s) so model calls don't trip it.
     model_request_timeout_s: float = 120.0
     # Leave a server we spawned running on exit (reused next run) unless asked
