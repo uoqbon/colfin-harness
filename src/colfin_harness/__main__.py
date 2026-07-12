@@ -244,11 +244,15 @@ def main() -> int:
                 session.close()
 
         try:
-            turn_executor.submit(_teardown).result()
+            try:
+                turn_executor.submit(_teardown).result()
+            finally:
+                turn_executor.shutdown(wait=False, cancel_futures=True)
         finally:
-            turn_executor.shutdown(wait=False, cancel_futures=True)
-        if args.stop_server or not runtime.config.keep_model_server:
-            runtime.stop_server()
+            # Always runs, even if session teardown raised — an explicit
+            # --stop-server must not leave the model server behind.
+            if args.stop_server or not runtime.config.keep_model_server:
+                runtime.stop_server()
     return 0
 
 

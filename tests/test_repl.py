@@ -139,7 +139,9 @@ def test_repl_acquires_lock_on_turn_executor_thread(monkeypatch):
     lock = RecordingLock()
     with ThreadPoolExecutor(max_workers=1, thread_name_prefix="test-turn") as executor:
         cli.run_repl(orch, FakeSession(), [], turn_lock=lock, turn_executor=executor)
-    assert lock.acquired_on == ["test-turn_0"]  # executor thread, not MainThread
+    assert len(lock.acquired_on) == 1
+    # The executor thread (prefix, not exact CPython naming), never MainThread.
+    assert lock.acquired_on[0].startswith("test-turn")
 
 
 def test_resolve_settings_omitted_keeps_base():

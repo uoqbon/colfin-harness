@@ -80,13 +80,38 @@ def normalize_user_agent(user_agent: str) -> str:
 def _headless_user_agent(playwright) -> str:
     """Discover the current headless build's real UA from a throwaway browser
     (it changes with every Chromium bump, so it can't be hardcoded) and
-    normalize it. Costs one extra ~fast headless launch, headless mode only."""
+    normalize it. Costs one extra ~fast headless launch, headless mode only.
+
+    Scope: this patches the ``User-Agent`` request header and
+    ``navigator.userAgent`` — the vector COL's classic-ASP login checks.
+    Client hints (``Sec-CH-UA`` / ``navigator.userAgentData``) are NOT
+    rewritten; if COL ever starts consuming those, headless login will
+    regress again and this is the place to look.
+    """
     browser = playwright.chromium.launch(headless=True)
     try:
         ua = browser.new_page().evaluate("navigator.userAgent")
     finally:
         browser.close()
-    return normalize_user_agent(ua)
+    normalized = normalize_user_agent(ua)
+    if "headless" in normalized.lower():
+        # Chromium renamed its headless marker and the rewrite missed it —
+        # login will likely stall at _await_auth. Say so instead of failing
+        # silently. (A UA string is not a secret; logging it is fine.)
+        logger.warning(
+            "user agent still carries a headless marker after normalization: %s", normalized
+        )
+    return normalized
+
+
+def _url_host(url: str) -> str:
+    """The bare host of *url* for diagnostics, ``"?"`` if unparsable. Host
+    only, ever — login-flow paths/query strings must never reach a log or
+    exception message."""
+    try:
+        return httpx.URL(url).host or "?"
+    except Exception:
+        return "?"
 
 
 def node_host(url: str) -> str | None:
@@ -289,14 +314,7 @@ class SessionManager:
         disagrees with the node cache. Never echoes the credentials."""
         previous = self._host
         deadline = time.monotonic() + self.config.auth_handoff_timeout_s
-        page_host = "?"
         while time.monotonic() < deadline:
-            # Host only, ever — a login-flow URL's path/query must never reach
-            # the log or an exception message.
-            try:
-                page_host = httpx.URL(page.url).host or "?"
-            except Exception:
-                page_host = "?"
             host = node_host(page.url)
             if host is not None and host != self._host:
                 logger.info("Login assigned to node %s; pinning session there", host)
@@ -305,15 +323,17 @@ class SessionManager:
                 self._cache_node(host)
                 logger.info("Session is live on %s.", host)
                 return
-            logger.debug("login handoff pending; browser page is on %s", page_host)
+            logger.debug("login handoff pending; browser page is on %s", _url_host(page.url))
             time.sleep(2)
         if self._host != previous:
             self._pin(previous)
+        # Captured fresh at failure time — the last in-loop reading could be a
+        # whole poll interval stale.
         raise LoginFailed(
             f"login did not authenticate within {self.config.auth_handoff_timeout_s:.0f}s — "
             "the user ID or password may be wrong, the login page changed, or the "
             "redirect never reached a phNN.colfinancial.com app node "
-            f"(browser page ended on host {page_host!r})"
+            f"(browser page ended on host {_url_host(page.url)!r})"
         )
 
     def relogin(self) -> None:
