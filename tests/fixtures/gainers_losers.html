@@ -1,0 +1,581 @@
+
+<HTML>
+<HEAD>
+<script type="text/javascript">
+document.domain = /(\w+)(.\w+)?$/.exec(location.hostname)[0];
+</script>
+<script src="../jquery/jquery-latest.js"></script>
+<script src="../javascripts/CENTER.js"></script>
+</HEAD>
+<BODY topmargin="0" leftmargin="0" marginheight=0 marginwidth=0 rightmargin=0 onLoad="SetCmdFocus()">
+
+<div align="center">
+<TABLE border="0" width="760" cellspacing="0" cellpadding="0">
+<TR>
+<TD width="586"><b><font face="Helvetica" color="#424542" style="font-size: 11px">GAINERS / LOSERS</font></b>
+<HR style="font-size: 11px" width="760" align="left"></TD>
+</TR>
+</TABLE>
+</div>
+<div align="center">
+<TABLE border="0" width="760" cellspacing="0" cellpadding="0">
+<TR>
+<TD width="100%">
+<table border="0">
+<tr>
+<td><b><font face="Helvetica" style="font-size: 11px" color="#008000">Top Gainers</font></b></td>
+<td><b><font face="Helvetica" style="font-size: 11px" color="#FF0000">Top Losers</font></b></td>
+</tr>
+<tr>
+<td valign=top>
+<html>
+<head>
+</head>
+<body topmargin="0" leftmargin="0" marginheight = 0 marginwidth= 0 rightmargin=0>
+
+<table id="mytable" width="370" class="reference" border="1" cellPadding="0" cellSpacing="0">
+
+<tr bgColor="#666699">
+<th align="middle" bgcolor="#31599C"><font color="#ffffff" face="Helvetica" style="font-size: 11px"><b>#</b></font></th>
+
+<th align="middle" bgcolor="#31599C"><font color="#ffffff" face="Helvetica" style="font-size: 11px"><b>Stock Code</b></font></th>
+
+<th align="middle" bgcolor="#31599C"><font color="#ffffff" face="Helvetica" style="font-size: 11px"><b>Last</b> </font></th>
+
+<th align="middle" bgcolor="#31599C"><font color="#ffffff" face="Helvetica" style="font-size: 11px"><b>Change</b> </font></th>
+
+<th align="middle" bgcolor="#31599C"><font color="#ffffff" face="Helvetica" style="font-size: 11px"><b>%Change</b> </font></th>
+
+<th align="middle" bgcolor="#31599C"><font color="#ffffff" face="Helvetica" style="font-size: 11px"><b>Value</b> </font></th>
+</tr>
+
+<tr bgColor="#ffffff">
+<td align="middle"><font face="Helvetica" style="font-size: 11px" color="#424542">1</font></td>
+<td class="pointer" align="left" onclick="gotolink('NI ')"><font face="Helvetica" style="font-size: 11px" color="blue">NI </font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#008000">0.4600</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#008000">0.0700</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#008000">17.95%</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">46,000</font></td>
+</tr>
+
+<tr bgColor="#efefef">
+<td align="middle"><font face="Helvetica" style="font-size: 11px" color="#424542">2</font></td>
+<td class="pointer" align="left" onclick="gotolink('TECH ')"><font face="Helvetica" style="font-size: 11px" color="blue">TECH </font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#008000">1.0300</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#008000">0.1000</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#008000">10.75%</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">11,665,280</font></td>
+</tr>
+
+<tr bgColor="#ffffff">
+<td align="middle"><font face="Helvetica" style="font-size: 11px" color="#424542">3</font></td>
+<td class="pointer" align="left" onclick="gotolink('CAT ')"><font face="Helvetica" style="font-size: 11px" color="blue">CAT </font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#008000">9.9500</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#008000">0.8100</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#008000">8.86%</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">1,990</font></td>
+</tr>
+
+<tr bgColor="#efefef">
+<td align="middle"><font face="Helvetica" style="font-size: 11px" color="#424542">4</font></td>
+<td class="pointer" align="left" onclick="gotolink('TUGS ')"><font face="Helvetica" style="font-size: 11px" color="blue">TUGS </font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#008000">1.0400</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#008000">0.0800</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#008000">8.33%</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">4,726,290</font></td>
+</tr>
+
+<tr bgColor="#ffffff">
+<td align="middle"><font face="Helvetica" style="font-size: 11px" color="#424542">5</font></td>
+<td class="pointer" align="left" onclick="gotolink('SUN ')"><font face="Helvetica" style="font-size: 11px" color="blue">SUN </font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#008000">0.4550</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#008000">0.0300</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#008000">7.06%</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">30,900</font></td>
+</tr>
+
+<tr bgColor="#efefef">
+<td align="middle"><font face="Helvetica" style="font-size: 11px" color="#424542">6</font></td>
+<td class="pointer" align="left" onclick="gotolink('APC ')"><font face="Helvetica" style="font-size: 11px" color="blue">APC </font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#008000">0.1120</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#008000">0.0070</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#008000">6.67%</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">14,960</font></td>
+</tr>
+
+<tr bgColor="#ffffff">
+<td align="middle"><font face="Helvetica" style="font-size: 11px" color="#424542">7</font></td>
+<td class="pointer" align="left" onclick="gotolink('AT ')"><font face="Helvetica" style="font-size: 11px" color="blue">AT </font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#008000">8.3000</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#008000">0.5000</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#008000">6.41%</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">41,730,787</font></td>
+</tr>
+
+<tr bgColor="#efefef">
+<td align="middle"><font face="Helvetica" style="font-size: 11px" color="#424542">8</font></td>
+<td class="pointer" align="left" onclick="gotolink('APX ')"><font face="Helvetica" style="font-size: 11px" color="blue">APX </font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#008000">13.0000</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#008000">0.7600</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#008000">6.21%</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">434,248,248</font></td>
+</tr>
+
+<tr bgColor="#ffffff">
+<td align="middle"><font face="Helvetica" style="font-size: 11px" color="#424542">9</font></td>
+<td class="pointer" align="left" onclick="gotolink('TOP ')"><font face="Helvetica" style="font-size: 11px" color="blue">TOP </font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#008000">1.7500</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#008000">0.1000</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#008000">6.06%</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">7,809,690</font></td>
+</tr>
+
+<tr bgColor="#efefef">
+<td align="middle"><font face="Helvetica" style="font-size: 11px" color="#424542">10</font></td>
+<td class="pointer" align="left" onclick="gotolink('ALI ')"><font face="Helvetica" style="font-size: 11px" color="blue">ALI </font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#008000">16.0000</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#008000">0.9000</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#008000">5.96%</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">397,246,964</font></td>
+</tr>
+
+<tr bgColor="#ffffff">
+<td align="middle"><font face="Helvetica" style="font-size: 11px" color="#424542">11</font></td>
+<td class="pointer" align="left" onclick="gotolink('PHN ')"><font face="Helvetica" style="font-size: 11px" color="blue">PHN </font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#008000">15.8600</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#008000">0.8800</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#008000">5.87%</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">1,586</font></td>
+</tr>
+
+<tr bgColor="#efefef">
+<td align="middle"><font face="Helvetica" style="font-size: 11px" color="#424542">12</font></td>
+<td class="pointer" align="left" onclick="gotolink('BSC ')"><font face="Helvetica" style="font-size: 11px" color="blue">BSC </font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#008000">0.1160</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#008000">0.0060</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#008000">5.45%</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">3,253,310</font></td>
+</tr>
+
+<tr bgColor="#ffffff">
+<td align="middle"><font face="Helvetica" style="font-size: 11px" color="#424542">13</font></td>
+<td class="pointer" align="left" onclick="gotolink('EEI ')"><font face="Helvetica" style="font-size: 11px" color="blue">EEI </font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#008000">1.9900</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#008000">0.1000</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#008000">5.29%</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">79,550</font></td>
+</tr>
+
+<tr bgColor="#efefef">
+<td align="middle"><font face="Helvetica" style="font-size: 11px" color="#424542">14</font></td>
+<td class="pointer" align="left" onclick="gotolink('DITO ')"><font face="Helvetica" style="font-size: 11px" color="blue">DITO </font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#008000">0.8000</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#008000">0.0400</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#008000">5.26%</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">16,340,040</font></td>
+</tr>
+
+<tr bgColor="#ffffff">
+<td align="middle"><font face="Helvetica" style="font-size: 11px" color="#424542">15</font></td>
+<td class="pointer" align="left" onclick="gotolink('V ')"><font face="Helvetica" style="font-size: 11px" color="blue">V </font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#008000">0.8300</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#008000">0.0400</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#008000">5.06%</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">1,660</font></td>
+</tr>
+
+<tr bgColor="#efefef">
+<td align="middle"><font face="Helvetica" style="font-size: 11px" color="#424542">16</font></td>
+<td class="pointer" align="left" onclick="gotolink('LODE ')"><font face="Helvetica" style="font-size: 11px" color="blue">LODE </font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#008000">0.3200</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#008000">0.0150</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#008000">4.92%</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">12,700</font></td>
+</tr>
+
+<tr bgColor="#ffffff">
+<td align="middle"><font face="Helvetica" style="font-size: 11px" color="#424542">17</font></td>
+<td class="pointer" align="left" onclick="gotolink('BALAI ')"><font face="Helvetica" style="font-size: 11px" color="blue">BALAI </font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#008000">0.3250</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#008000">0.0150</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#008000">4.84%</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">32,350</font></td>
+</tr>
+
+<tr bgColor="#efefef">
+<td align="middle"><font face="Helvetica" style="font-size: 11px" color="#424542">18</font></td>
+<td class="pointer" align="left" onclick="gotolink('EURO ')"><font face="Helvetica" style="font-size: 11px" color="blue">EURO </font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#008000">1.0900</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#008000">0.0500</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#008000">4.81%</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">9,810</font></td>
+</tr>
+
+<tr bgColor="#ffffff">
+<td align="middle"><font face="Helvetica" style="font-size: 11px" color="#424542">19</font></td>
+<td class="pointer" align="left" onclick="gotolink('CNPF ')"><font face="Helvetica" style="font-size: 11px" color="blue">CNPF </font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#008000">32.5000</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#008000">1.4000</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#008000">4.50%</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">18,435,880</font></td>
+</tr>
+
+<tr bgColor="#efefef">
+<td align="middle"><font face="Helvetica" style="font-size: 11px" color="#424542">20</font></td>
+<td class="pointer" align="left" onclick="gotolink('WEB ')"><font face="Helvetica" style="font-size: 11px" color="blue">WEB </font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#008000">14.1600</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#008000">0.6000</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#008000">4.42%</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">38,616,450</font></td>
+</tr>
+
+</TBODY>
+</table>
+
+<script>setTdBackground();</script>
+
+</body>
+</html>
+
+</td>
+<td valign=top>
+<html>
+<head>
+</head>
+
+<body topmargin="0" leftmargin="0" marginheight=0 marginwidth = 0 rightmargin=0>
+
+<table width="370" id="mytable2" border="1" cellPadding="0" cellSpacing="0">
+
+<tr bgColor="#666699">
+<th align="middle" bgcolor="#31599C"><font color="#ffffff" face="Helvetica" style="font-size: 11px"><b>#</b></font></th>
+
+<th align="middle" bgcolor="#31599C"><font color="#ffffff" face="Helvetica" style="font-size: 11px"><b>Stock Code</b></font></th>
+
+<th align="middle" bgcolor="#31599C"><font color="#ffffff" face="Helvetica" style="font-size: 11px"><b>Last</b> </font></th>
+
+<th align="middle" bgcolor="#31599C"><font color="#ffffff" face="Helvetica" style="font-size: 11px"><b>Change</b> </font></th>
+
+<th align="middle" bgcolor="#31599C"><font color="#ffffff" face="Helvetica" style="font-size: 11px"><b>%Change</b> </font></th>
+
+<th align="middle" bgcolor="#31599C"><font color="#ffffff" face="Helvetica" style="font-size: 11px"><b>Value</b> </font></th>
+</tr>
+
+<tr bgColor="#ffffff">
+<td align="middle"><font face="Helvetica" style="font-size: 11px" color="#424542">1</font></td>
+<td class="pointer" align="left" onclick="gotolink('RRHI ')"><font face="Helvetica" style="font-size: 11px" color="blue">RRHI </font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#FF0000">38.0000</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#FF0000">-8.7500</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#FF0000">-18.72%</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">2,662,985</font></td>
+</tr>
+
+<tr bgColor="#efefef">
+<td align="middle"><font face="Helvetica" style="font-size: 11px" color="#424542">2</font></td>
+<td class="pointer" align="left" onclick="gotolink('ABSP ')"><font face="Helvetica" style="font-size: 11px" color="blue">ABSP </font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#FF0000">2.8000</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#FF0000">-0.4500</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#FF0000">-13.85%</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">47,820</font></td>
+</tr>
+
+<tr bgColor="#ffffff">
+<td align="middle"><font face="Helvetica" style="font-size: 11px" color="#424542">3</font></td>
+<td class="pointer" align="left" onclick="gotolink('DIZ ')"><font face="Helvetica" style="font-size: 11px" color="blue">DIZ </font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#FF0000">3.0200</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#FF0000">-0.4300</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#FF0000">-12.46%</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">6,030</font></td>
+</tr>
+
+<tr bgColor="#efefef">
+<td align="middle"><font face="Helvetica" style="font-size: 11px" color="#424542">4</font></td>
+<td class="pointer" align="left" onclick="gotolink('WPI ')"><font face="Helvetica" style="font-size: 11px" color="blue">WPI </font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#FF0000">0.4250</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#FF0000">-0.0600</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#FF0000">-12.37%</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">4,250</font></td>
+</tr>
+
+<tr bgColor="#ffffff">
+<td align="middle"><font face="Helvetica" style="font-size: 11px" color="#424542">5</font></td>
+<td class="pointer" align="left" onclick="gotolink('KPPI ')"><font face="Helvetica" style="font-size: 11px" color="blue">KPPI </font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#FF0000">1.2500</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#FF0000">-0.0900</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#FF0000">-6.72%</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">31,380</font></td>
+</tr>
+
+<tr bgColor="#efefef">
+<td align="middle"><font face="Helvetica" style="font-size: 11px" color="#424542">6</font></td>
+<td class="pointer" align="left" onclick="gotolink('WIN ')"><font face="Helvetica" style="font-size: 11px" color="blue">WIN </font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#FF0000">0.2800</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#FF0000">-0.0200</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#FF0000">-6.67%</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">213,900</font></td>
+</tr>
+
+<tr bgColor="#ffffff">
+<td align="middle"><font face="Helvetica" style="font-size: 11px" color="#424542">7</font></td>
+<td class="pointer" align="left" onclick="gotolink('ABS ')"><font face="Helvetica" style="font-size: 11px" color="blue">ABS </font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#FF0000">3.1400</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#FF0000">-0.2000</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#FF0000">-5.99%</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">1,348,570</font></td>
+</tr>
+
+<tr bgColor="#efefef">
+<td align="middle"><font face="Helvetica" style="font-size: 11px" color="#424542">8</font></td>
+<td class="pointer" align="left" onclick="gotolink('OV ')"><font face="Helvetica" style="font-size: 11px" color="blue">OV </font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#FF0000">0.0080</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#FF0000">-0.0005</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#FF0000">-5.88%</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">112,000</font></td>
+</tr>
+
+<tr bgColor="#ffffff">
+<td align="middle"><font face="Helvetica" style="font-size: 11px" color="#424542">9</font></td>
+<td class="pointer" align="left" onclick="gotolink('BHI ')"><font face="Helvetica" style="font-size: 11px" color="blue">BHI </font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#FF0000">0.0370</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#FF0000">-0.0020</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#FF0000">-5.13%</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">254,500</font></td>
+</tr>
+
+<tr bgColor="#efefef">
+<td align="middle"><font face="Helvetica" style="font-size: 11px" color="#424542">10</font></td>
+<td class="pointer" align="left" onclick="gotolink('SBS ')"><font face="Helvetica" style="font-size: 11px" color="blue">SBS </font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#FF0000">3.1600</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#FF0000">-0.1700</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#FF0000">-5.11%</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">6,320</font></td>
+</tr>
+
+<tr bgColor="#ffffff">
+<td align="middle"><font face="Helvetica" style="font-size: 11px" color="#424542">11</font></td>
+<td class="pointer" align="left" onclick="gotolink('LFM ')"><font face="Helvetica" style="font-size: 11px" color="blue">LFM </font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#FF0000">26.6000</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#FF0000">-1.3000</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#FF0000">-4.66%</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">110,840</font></td>
+</tr>
+
+<tr bgColor="#efefef">
+<td align="middle"><font face="Helvetica" style="font-size: 11px" color="#424542">12</font></td>
+<td class="pointer" align="left" onclick="gotolink('GMA7 ')"><font face="Helvetica" style="font-size: 11px" color="blue">GMA7 </font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#FF0000">4.3900</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#FF0000">-0.2000</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#FF0000">-4.36%</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">3,925,260</font></td>
+</tr>
+
+<tr bgColor="#ffffff">
+<td align="middle"><font face="Helvetica" style="font-size: 11px" color="#424542">13</font></td>
+<td class="pointer" align="left" onclick="gotolink('PLUS ')"><font face="Helvetica" style="font-size: 11px" color="blue">PLUS </font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#FF0000">11.3600</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#FF0000">-0.4800</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#FF0000">-4.05%</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">174,798,930</font></td>
+</tr>
+
+<tr bgColor="#efefef">
+<td align="middle"><font face="Helvetica" style="font-size: 11px" color="#424542">14</font></td>
+<td class="pointer" align="left" onclick="gotolink('TCB2D ')"><font face="Helvetica" style="font-size: 11px" color="blue">TCB2D </font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#FF0000">7.4000</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#FF0000">-0.3000</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#FF0000">-3.90%</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">11,403</font></td>
+</tr>
+
+<tr bgColor="#ffffff">
+<td align="middle"><font face="Helvetica" style="font-size: 11px" color="#424542">15</font></td>
+<td class="pointer" align="left" onclick="gotolink('TFHI ')"><font face="Helvetica" style="font-size: 11px" color="blue">TFHI </font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#FF0000">53.0500</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#FF0000">-1.9500</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#FF0000">-3.55%</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">29,644</font></td>
+</tr>
+
+<tr bgColor="#efefef">
+<td align="middle"><font face="Helvetica" style="font-size: 11px" color="#424542">16</font></td>
+<td class="pointer" align="left" onclick="gotolink('CEI ')"><font face="Helvetica" style="font-size: 11px" color="blue">CEI </font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#FF0000">0.0860</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#FF0000">-0.0030</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#FF0000">-3.37%</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">12,070</font></td>
+</tr>
+
+<tr bgColor="#ffffff">
+<td align="middle"><font face="Helvetica" style="font-size: 11px" color="#424542">17</font></td>
+<td class="pointer" align="left" onclick="gotolink('FEU ')"><font face="Helvetica" style="font-size: 11px" color="blue">FEU </font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#FF0000">800.5000</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#FF0000">-24.0000</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#FF0000">-2.91%</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">40,025</font></td>
+</tr>
+
+<tr bgColor="#efefef">
+<td align="middle"><font face="Helvetica" style="font-size: 11px" color="#424542">18</font></td>
+<td class="pointer" align="left" onclick="gotolink('DFNN ')"><font face="Helvetica" style="font-size: 11px" color="blue">DFNN </font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#FF0000">0.7100</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#FF0000">-0.0200</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#FF0000">-2.74%</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">279,400</font></td>
+</tr>
+
+<tr bgColor="#ffffff">
+<td align="middle"><font face="Helvetica" style="font-size: 11px" color="#424542">19</font></td>
+<td class="pointer" align="left" onclick="gotolink('CTS ')"><font face="Helvetica" style="font-size: 11px" color="blue">CTS </font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#FF0000">0.3650</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#FF0000">-0.0100</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#FF0000">-2.67%</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">29,200</font></td>
+</tr>
+
+<tr bgColor="#efefef">
+<td align="middle"><font face="Helvetica" style="font-size: 11px" color="#424542">20</font></td>
+<td class="pointer" align="left" onclick="gotolink('GLOBB ')"><font face="Helvetica" style="font-size: 11px" color="blue">GLOBB </font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#FF0000">1,988.0000</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#FF0000">-46.0000</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#FF0000">-2.26%</font></td>
+
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">398,410</font></td>
+</tr>
+
+</table>
+
+<script>setTdBackground();</script>
+
+</body>
+</html>
+
+</td>
+</tr
+</table>
+</TD>
+</TR>
+</TABLE>
+</div>
+
+</BODY>
+
+</HTML>

@@ -194,7 +194,7 @@ def _guide_tool(fixture_html):
     from colfin_harness.orchestrator.tools import build_default_registry
 
     registry = build_default_registry(
-        None, None, None, None, ResearchAgent(_sequenced(fixture_html))
+        None, None, None, None, ResearchAgent(_sequenced(fixture_html)), None
     )
     return registry.get("get_technical_guide").fn
 

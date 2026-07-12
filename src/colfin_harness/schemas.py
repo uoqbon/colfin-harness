@@ -149,6 +149,80 @@ class TradePrices(BaseModel):
     total_trades: int | None = None
 
 
+# --- Quotes tab: Market Information (quotes/INDEX_AU_2DB.asp etc.) ----------
+
+
+class IndexQuote(BaseModel):
+    """One row of the Summary page's Market Indices table."""
+
+    name: str
+    previous: Decimal | None = None
+    current: Decimal | None = None
+    change: Decimal | None = None
+    pct_change: Decimal | None = None
+    direction: Direction = Direction.FLAT
+
+
+class MarketBreadth(BaseModel):
+    """The Summary page's exchange-wide totals (label/value table)."""
+
+    total_trades: int | None = None
+    total_value: Decimal | None = None
+    total_volume: int | None = None
+    up_volume: int | None = None
+    down_volume: int | None = None
+    unchanged_volume: int | None = None
+    advances: int | None = None
+    declines: int | None = None
+    unchanged: int | None = None
+
+
+class MarketSummary(BaseModel):
+    market_status: str | None = None  # "Market Status: <text>" header, verbatim
+    indices: list[IndexQuote] = Field(default_factory=list)
+    breadth: MarketBreadth = Field(default_factory=MarketBreadth)
+
+
+class MoverRow(BaseModel):
+    """One row of the Top Gainers or Top Losers table. Losers carry explicit
+    minus signs on change/%change; value is peso trade value. A halted or
+    suspended stock prints '-' values, which parse to None — the row itself
+    is kept so the top-20 list never silently shrinks."""
+
+    rank: int
+    symbol: str
+    last: Decimal | None = None
+    change: Decimal | None = None
+    pct_change: Decimal | None = None
+    value: Decimal | None = None
+
+
+class GainersLosers(BaseModel):
+    gainers: list[MoverRow] = Field(default_factory=list)
+    losers: list[MoverRow] = Field(default_factory=list)
+
+
+class MostActiveRow(BaseModel):
+    """One row of the 20 Most Active Stocks by Trade Value table. As with
+    MoverRow, a halted stock's '-' values parse to None but keep their row."""
+
+    rank: int
+    symbol: str
+    last: Decimal | None = None
+    change: Decimal | None = None
+    pct_change: Decimal | None = None
+    direction: Direction = Direction.FLAT
+    high: Decimal | None = None
+    low: Decimal | None = None
+    open: Decimal | None = None
+    volume: int | None = None
+    value: Decimal | None = None
+
+
+class MostActive(BaseModel):
+    rows: list[MostActiveRow] = Field(default_factory=list)
+
+
 # --- Research: Technical Guide (Research/TECHGUIDE_Mid.asp) -----------------
 
 

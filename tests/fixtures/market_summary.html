@@ -1,0 +1,177 @@
+
+<HTML>
+
+<HEAD>
+<style type="text/css" media="all">
+
+table.reference
+{
+background-color:#ffffff;
+border:1px solid #c3c3c3;
+border-collapse:collapse;
+}
+
+table.reference th
+{
+background-color:#e5eecc;
+border:1px solid #c3c3c3;
+padding:1px;
+vertical-align:top;
+}
+
+table.reference td
+{
+border:1px solid #c3c3c3;
+padding:1.5px;
+vertical-align:top;
+}
+
+td.pointer
+
+{
+  cursor: pointer;
+  cursor: hand;
+}
+</style>
+
+</HEAD>
+
+<BODY topmargin="0" leftmargin="0" marginheight=0 marginwidth=0 rightmargin=0>
+<div align="center">
+<TABLE border="0" width="760" cellspacing="0" cellpadding="0">
+  <TR>
+	<TD><b><font face="Helvetica" color="#424542" style="font-size: 11px">MARKET INFORMATION</font></b>
+		  <HR style="font-size: 11px" width="760" align="left">
+	</TD>
+  </TR>
+</TABLE>
+<TABLE border="0" width="760" cellspacing="0" cellpadding="0">
+  <tr>
+	<td width="60%" height="18"><font face="Helvetica" style="font-size: 11px" color="#424542"><b>Market Indices</b></font></td>
+	<td width="40%" height="18"><font face="Helvetica" style="font-size: 11px" color="#424542"><b>Market Status: Closed...</b></font></td>
+  </tr>
+  <tr>
+	<td width="60%">
+
+<table id="mytable" border="1" cellPadding="0" cellSpacing="0" width=95%>
+<tr bgColor="#666699">
+<th align="center" bgcolor="#31599C"><font face="Helvetica" style="font-size: 11px" color="#FFFFFF"><b>Index</b></font></th>
+<th align="center" bgcolor="#31599C"><font face="Helvetica" style="font-size: 11px" color="#FFFFFF"><b>Previous</b></font></th>
+<th align="center" bgcolor="#31599C"><font face="Helvetica" style="font-size: 11px" color="#FFFFFF"><b>Current</b></font></th>
+<th align="center" bgcolor="#31599C"><font face="Helvetica" style="font-size: 11px" color="#FFFFFF"><b>%Change</b></font></th>
+<th align="center" bgcolor="#31599C"><font face="Helvetica" style="font-size: 11px" color="#FFFFFF"><b>Change</b></font></th>
+</tr>
+<tr bgColor="#ffffff">
+<td class="pointer" align="left"><font face="Helvetica" style="font-size: 11px" color="blue"><img width=11 height=11 src="../images/ico_chart.png" onClick="showChart('PCOMP')" />&nbsp;&nbsp;<img width=11 height=11 src="../images/ico_comp.png" onClick="showComp('PSEI')" />&nbsp;<b>PSE Composite</b></font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">6,223.87</font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">6,286.70</font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="green">1.01</td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="green">62.83</td>
+</tr>
+<tr bgColor="#EBEBEB">
+<td class="pointer" align="left"><font face="Helvetica" style="font-size: 11px" color="blue"><img width=11 height=11 src="../images/ico_chart.png" onClick="showChart('PASHR')" />&nbsp;&nbsp;<img width=11 height=11 src="../images/ico_comp.png" onClick="showComp2()" />&nbsp;<b>All Shares</b></font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">3,370.56</font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">3,393.34</font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="green">0.68</font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="green">22.78</font></td>
+</tr>
+<tr bgcolor="#ffffff">
+<td class="pointer" align="left"><font face="Helvetica" style="font-size: 11px" color="blue"><img width=11 height=11 src="../images/ico_chart.png" onClick="showChart('PFINC')" />&nbsp;&nbsp;<img width=11 height=11 src="../images/ico_comp.png" onClick="showComp('FIN')" />&nbsp;<b>Financials</b></font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">1,898.12</font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">1,916.57</font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="green">0.97</font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="green">18.45</font></td>
+</tr>
+<tr bgColor="#EBEBEB">
+<td class="pointer" align="left"><font face="Helvetica" style="font-size: 11px" color="blue"><img width=11 height=11 src="../images/ico_chart.png" onClick="showChart('PCOMM')" />&nbsp;&nbsp;<img width=11 height=11 src="../images/ico_comp.png" onClick="showComp('IND')" />&nbsp;<b>Industrial</b></font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">8,323.14</font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">8,378.22</font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="green">0.66</td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="green">55.08</td>
+</tr>
+<tr bgcolor="#ffffff">
+<td class="pointer" align="left"><font face="Helvetica" style="font-size: 11px" color="blue"><img width=11 height=11 src="../images/ico_chart.png" onClick="showChart('PHLDG')" />&nbsp;&nbsp;<img width=11 height=11 src="../images/ico_comp.png" onClick="showComp('HDG')" />&nbsp;<b>Holding Firms</b></font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">4,357.53</font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">4,390.82</font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="green">0.76</font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="green">33.29</font></td>
+</tr>
+<tr bgcolor="#EBEBEB">
+<td class="pointer" align="left"><font face="Helvetica" style="font-size: 11px" color="blue"><img width=11 height=11 src="../images/ico_chart.png" onClick="showChart('PPROP')" />&nbsp;&nbsp;<img width=11 height=11 src="../images/ico_comp.png" onClick="showComp('PRO')" />&nbsp;<b>Property</b></font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">1,869.85</font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">1,892.96</font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="green">1.24</td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="green">23.11</td>
+</tr>
+<tr bgColor="#ffffff">
+<td class="pointer" align="left"><font face="Helvetica" style="font-size: 11px" color="blue"><img width=11 height=11 src="../images/ico_chart.png" onClick="showChart('PSERV')" />&nbsp;&nbsp;<img width=11 height=11 src="../images/ico_comp.png" onClick="showComp('SVC')" />&nbsp;<b>Service</b></font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">3,394.48</font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">3,420.71</font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="green">0.77</font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="green">26.23</font></td>
+</tr>
+<tr bgcolor="#EBEBEB">
+
+<td class="pointer" align="left"><font face="Helvetica" style="font-size: 11px" color="blue"><img width=11 height=11 src="../images/ico_chart.png" onClick="showChart('PMINI')" />&nbsp;&nbsp;<img width=11 height=11 src="../images/ico_comp.png" onClick="showComp('M-O')" />&nbsp;<b>Mining and Oil</b></font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">14,219.32</font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="#424542">14,549.70</font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="green">2.32</font></td>
+<td align="right"><font face="Helvetica" style="font-size: 11px" color="green">330.38</font></td>
+</tr>
+</table>
+
+</td>
+<td width="40%">
+
+<table class="reference" border="1" cellspacing="0" cellpadding="0" width=98%>
+<tr>
+<td bgcolor="#31599C"><font face="Helvetica" style="font-size: 11px" color="#FFFFFF"><b>Total Trades</b></font></td>
+<td align="right" bgcolor="#FFFFFF"><font face="Helvetica" style="font-size: 11px" color="#424542">81,173</font></td>
+</tr>
+<tr>
+<td bgcolor="#31599C"><font face="Helvetica" style="font-size: 11px" color="#FFFFFF"><b>Total Value</b></font></td>
+<td align="right" bgcolor="#EBEBEB"><font face="Helvetica" style="font-size: 11px" color="#424542">6,775,041,069.50 </font> </td>
+</tr>
+<tr>
+<td bgcolor="#31599C"><font face="Helvetica" style="font-size: 11px" color="#FFFFFF"><b>Total Volume</b></font></td>
+<td align="right" bgcolor="#FFFFFF"><font face="Helvetica" style="font-size: 11px" color="#424542">1,131,732,160</font></td>
+</tr>
+<tr>
+<td bgcolor="#3D6EB4"><font face="Helvetica" style="font-size: 11px" color="#FFFFFF"><b>Up Volume</b></font></td>
+<td align="right" bgcolor="#EBEBEB"><font face="Helvetica" style="font-size: 11px" color="#008000">652,807,725</font></td>
+</tr>
+<tr>
+<td bgcolor="#3D6EB4"><font face="Helvetica" style="font-size: 11px" color="#FFFFFF"><b>Down Volume</b></font></td>
+<td align="right" bgcolor="#FFFFFF" ><font face="Helvetica" style="font-size: 11px" color="#FF0000">302,918,075</font></td>
+</tr>
+<tr>
+<td bgcolor="#3D6EB4"><font face="Helvetica" style="font-size: 11px" color="#FFFFFF"><b>Unch Volume</b></font></td>
+<td align="right" bgcolor="#EBEBEB"><font face="Helvetica" style="font-size: 11px" color="#FF6600">176,006,360</font></td>
+</tr>
+<tr>
+<td bgcolor="#31599C"><font face="Helvetica" style="font-size: 11px" color="#FFFFFF"><b>Advances</b></font></td>
+<td align="right" bgcolor="#FFFFFF"><font face="Helvetica" style="font-size: 11px" color="#008000">102</font></td>
+</tr>
+<tr>
+<td bgcolor="#31599C"><font face="Helvetica" style="font-size: 11px" color="#FFFFFF"><b>Declines</b></font></td>
+<td align="right" bgcolor="#EBEBEB"><font face="Helvetica" style="font-size: 11px" color="#FF0000">82</font></td>
+</tr>
+<tr>
+<td bgcolor="#31599C"><font face="Helvetica" style="font-size: 11px" color="#FFFFFF"><b>Unchanged</b></font></td>
+<td align="right" bgcolor="#FFFFFF"><font face="Helvetica" style="font-size: 11px" color="#FF6600">61 </font> </td>
+</tr>
+</table>
+
+</td>
+</tr>
+</table>
+</TD>
+</TR>
+</TABLE>
+
+</div>
+
+<script>setTdBackground();</script>
+
+</BODY>
+</HTML>
