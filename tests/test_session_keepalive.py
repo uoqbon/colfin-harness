@@ -36,6 +36,27 @@ class _FakeClient:
         return self._response
 
 
+def test_keep_warm_serializes_against_relogin_lock():
+    """keep_warm must take the session lock so a ping can never straddle a
+    relogin()'s node re-pin (stale-host NodePinningError / bounced ping)."""
+    import threading
+
+    mgr = SessionManager()
+    mgr._context = _BoomContext()
+    home_url = f"{mgr.config.base_url}{mgr.config.home_path}"
+    mgr._client = _FakeClient(_FakeResponse(home_url, "<html>Actual Balance ...</html>"))
+
+    with mgr._session_lock:  # simulate a relogin in progress
+        ping = threading.Thread(target=mgr.keep_warm)
+        ping.start()
+        ping.join(timeout=0.2)
+        assert ping.is_alive(), "keep_warm must block while relogin holds the lock"
+        assert mgr._client.calls == []
+    ping.join(timeout=5)
+    assert not ping.is_alive()
+    assert mgr._client.calls[0][0] == mgr.config.home_path
+
+
 def test_keep_warm_pings_home_via_httpx_without_playwright():
     mgr = SessionManager()
     mgr._context = _BoomContext()

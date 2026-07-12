@@ -13,7 +13,13 @@ import logging
 import threading
 from concurrent.futures import ThreadPoolExecutor
 
-from colfin_harness.agents import OrderEntryAgent, PortfolioAgent, QuotesAgent, ResearchAgent
+from colfin_harness.agents import (
+    MarketInfoAgent,
+    OrderEntryAgent,
+    PortfolioAgent,
+    QuotesAgent,
+    ResearchAgent,
+)
 from colfin_harness.config import (
     DEFAULT_MODEL_ID,
     GEMMA_MLX_MODELS,
@@ -210,6 +216,7 @@ def main() -> int:
             PortfolioAgent(session),
             OrderEntryAgent(session),
             ResearchAgent(session),
+            MarketInfoAgent(session),
         )
         orchestrator = Orchestrator(runtime, registry)
         runtime.ensure_server()  # warm the model before the first question

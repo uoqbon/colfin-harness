@@ -1,6 +1,6 @@
 [project]
 name = "colfin-harness"
-version = "0.3.0"
+version = "0.4.0"
 description = "Local multi-agent harness for the COL Financial trading platform, built around an MLX vision-language model"
 readme = "README.md"
 license = "Apache-2.0"

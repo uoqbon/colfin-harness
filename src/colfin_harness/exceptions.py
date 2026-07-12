@@ -27,7 +27,9 @@ class LoginFailed(HarnessError):
 
 
 class NodePinningError(HarnessError):
-    """A request escaped the sticky ph45 load-balancer node."""
+    """A request escaped the sticky load-balancer node (phNN.colfinancial.com)
+    the session is pinned to — the one assigned at login and discovered from
+    the post-login redirect."""
 
 
 class MarketClosedError(HarnessError):

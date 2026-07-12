@@ -47,7 +47,9 @@ class ToolRegistry:
         return "\n".join(lines)
 
 
-def build_default_registry(session, quotes, portfolio, order_entry, research) -> ToolRegistry:
+def build_default_registry(
+    session, quotes, portfolio, order_entry, research, market_info
+) -> ToolRegistry:
     """Wire the standard tool set: read-only data, vision, and the gated
     order-entry probe. Nothing here can submit an order."""
     registry = ToolRegistry()
@@ -92,6 +94,15 @@ def build_default_registry(session, quotes, portfolio, order_entry, research) ->
             lines.append(f"- {reco} ({len(tickers)}): {', '.join(tickers)}")
         lines.append("Call again with a symbol for a stock's full entry.")
         return "\n".join(lines)
+
+    def get_market_summary() -> str:
+        return market_info.get_market_summary().model_dump_json()
+
+    def get_gainers_losers() -> str:
+        return market_info.get_gainers_losers().model_dump_json()
+
+    def get_most_active() -> str:
+        return market_info.get_most_active().model_dump_json()
 
     def take_screenshot() -> ToolResult:
         path = session.screenshot()
@@ -161,6 +172,35 @@ def build_default_registry(session, quotes, portfolio, order_entry, research) ->
                 "recommendation": "optional rating to list all stocks rated that way, e.g. BUY",
             },
             get_technical_guide,
+        )
+    )
+    registry.register(
+        Tool(
+            "get_market_summary",
+            "Market-wide PSE snapshot: composite/all-shares/sector index levels "
+            "with change and %change, market status, and breadth (total trades, "
+            "value, volume; up/down/unchanged volume; advances, declines, "
+            "unchanged). Use for 'how is the market doing' questions.",
+            {},
+            get_market_summary,
+        )
+    )
+    registry.register(
+        Tool(
+            "get_gainers_losers",
+            "Today's top 20 PSE gainers and top 20 losers by %change, each with "
+            "last price, change, %change, and peso trade value.",
+            {},
+            get_gainers_losers,
+        )
+    )
+    registry.register(
+        Tool(
+            "get_most_active",
+            "Today's 20 most actively traded PSE stocks by peso trade value, "
+            "with last/change/%change, open/high/low, volume, and value.",
+            {},
+            get_most_active,
         )
     )
     registry.register(

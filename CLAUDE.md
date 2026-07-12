@@ -46,8 +46,11 @@ Keychain (`security add-generic-password -s colfin-discord-bot -a bot -w`); forc
   logged in automatically: `_login` fills the `id="login"` form (user ID split across
   `txtUser1`/`txtUser2`, password in `txtPassword`) from in-memory `Credentials` and
   submits; a warm profile skips login entirely. No captcha/2FA. Cookies are mirrored into
-  an httpx client **pinned to the sticky `ph45` node** (`NodePinningError` if a request
-  escapes). Keep-alive thread fights the idle timeout; `SessionExpired` on logout markers
+  an httpx client **pinned to the sticky `phNN` node discovered from the post-login
+  redirect** — the node assigned varies per login (`ph45`, `ph1`, …), so it is never
+  assumed from config; the last node is cached in `~/.colfin-harness/node` so a warm
+  profile is probed on the right host (`NodePinningError` if a request
+  escapes the pinned node). Keep-alive thread fights the idle timeout; `SessionExpired` on logout markers
   (the REPL can silently `relogin`). `screenshot()` refuses the login page so the vision
   lane never captures credentials.
 - `src/colfin_harness/parsing/` — pure functions over HTML fragments, separate from
