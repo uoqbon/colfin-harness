@@ -72,6 +72,47 @@ def looks_logged_out(fragment: str) -> bool:
 _NODE_HOST_RE = re.compile(r"ph\d+\.colfinancial\.com")
 
 
+def normalize_user_agent(user_agent: str) -> str:
+    """Rewrite a headless Chromium UA to its regular-Chrome equivalent."""
+    return user_agent.replace("HeadlessChrome", "Chrome")
+
+
+def _headless_user_agent(playwright) -> str:
+    """Discover the current headless build's real UA from a throwaway browser
+    (it changes with every Chromium bump, so it can't be hardcoded) and
+    normalize it. Costs one extra ~fast headless launch, headless mode only.
+
+    Scope: this patches the ``User-Agent`` request header and
+    ``navigator.userAgent``. Sec-CH-UA client hints and Accept-Language are
+    handled separately, by launching the full Chromium build
+    (``channel="chromium"``) instead of the headless shell — see start().
+    """
+    browser = playwright.chromium.launch(headless=True, channel="chromium")
+    try:
+        ua = browser.new_page().evaluate("navigator.userAgent")
+    finally:
+        browser.close()
+    normalized = normalize_user_agent(ua)
+    if "headless" in normalized.lower():
+        # Chromium renamed its headless marker and the rewrite missed it —
+        # login will likely stall at _await_auth. Say so instead of failing
+        # silently. (A UA string is not a secret; logging it is fine.)
+        logger.warning(
+            "user agent still carries a headless marker after normalization: %s", normalized
+        )
+    return normalized
+
+
+def _url_host(url: str) -> str:
+    """The bare host of *url* for diagnostics, ``"?"`` if unparsable. Host
+    only, ever — login-flow paths/query strings must never reach a log or
+    exception message."""
+    try:
+        return httpx.URL(url).host or "?"
+    except Exception:
+        return "?"
+
+
 def node_host(url: str) -> str | None:
     """The sticky ``phNN.colfinancial.com`` host of *url*, or None if the URL
     is not on an app node (login page on www, blank page, garbage)."""
@@ -174,10 +215,26 @@ class SessionManager:
 
         self.config.profile_dir.mkdir(parents=True, exist_ok=True)
         self._playwright = sync_playwright().start()
+        launch_kwargs: dict[str, object] = {}
+        if self.config.headless:
+            # COL's login backend answers a headless browser's POST without
+            # ever redirecting to the phNN app node (observed 2026-07-13:
+            # identical login timed out headless, succeeded headed). Playwright's
+            # default headless=True runs the stripped "headless shell" build,
+            # which is detectably different on the wire even with a rewritten
+            # user agent: it omits Accept-Language entirely and brands
+            # Sec-CH-UA as "HeadlessChrome" (measured against a local capture
+            # server). channel="chromium" runs the FULL Chromium build in its
+            # headless mode instead, whose request headers are identical to a
+            # headed run; the UA string is the one remaining tell, normalized
+            # below.
+            launch_kwargs["channel"] = "chromium"
+            launch_kwargs["user_agent"] = _headless_user_agent(self._playwright)
         self._context = self._playwright.chromium.launch_persistent_context(
             user_data_dir=str(self.config.profile_dir),
             headless=self.config.headless,
             viewport={"width": 1280, "height": 900},
+            **launch_kwargs,
         )
         page = self._context.pages[0] if self._context.pages else self._context.new_page()
         # Probe the node the previous login was pinned to — a warm session is
@@ -223,8 +280,12 @@ class SessionManager:
         """Fill and submit the COL login form, then confirm the cookie handoff.
 
         The user ID's two halves go to txtUser1/txtUser2; the password to
-        txtPassword. We submit by pressing Enter in the password field so the
-        form's natural submit path (default button / onsubmit) fires. The
+        txtPassword. We submit exactly the way the page's own LOG IN button
+        does — its onclick runs ``CheckSubmit()``, which clicks the hidden
+        ``cmdLogOn`` submit control — rather than relying on Enter-key
+        implicit form submission, which depends on a rendering-sensitive
+        default-button rule (the submit control is display:none) and is the
+        kind of corner that can behave differently headless. The
         redirect lands the browser on the sticky phNN node assigned to this
         login — that host is discovered, pinned, and cached before the cookie
         handoff is confirmed. On success the page is moved onto the
@@ -244,10 +305,29 @@ class SessionManager:
         page.fill("#login input[name='txtUser1']", user1)
         page.fill("#login input[name='txtUser2']", user2)
         page.fill("#login input[name='txtPassword']", creds.password)
-        # If the live page has no default submit button, switch this to clicking
-        # the specific control or `page.locator("#login").evaluate("f=>f.submit()")`.
-        page.press("#login input[name='txtPassword']", "Enter")
-        self._await_auth(page)
+        # Log the login flow's document requests while we wait for the handoff
+        # (method/host/path/status ONLY — never query strings, never bodies:
+        # the credentials travel in the POST body, which is never touched).
+        def _log_login_response(response) -> None:
+            try:
+                if response.request.resource_type == "document":
+                    url = httpx.URL(response.url)
+                    logger.debug(
+                        "login flow: %s %s%s -> %s",
+                        response.request.method, url.host, url.path, response.status,
+                    )
+            except Exception:  # diagnostics must never break the login
+                pass
+
+        page.on("response", _log_login_response)
+        try:
+            # The same call the page's own LOG IN button makes (CheckSubmit()).
+            # The control is display:none, so it must be clicked via the DOM —
+            # Playwright's click() would wait for visibility forever.
+            page.evaluate("document.getElementById('cmdLogOn').click()")
+            self._await_auth(page)
+        finally:
+            page.remove_listener("response", _log_login_response)
         # Land on the app home page (on the discovered node) — mirrors the
         # warm-profile path and gets the browser off the login page before any
         # screenshot tool can fire. Must be HOME/HOME.asp: the FINAL2_STARTER
@@ -255,30 +335,54 @@ class SessionManager:
         page.goto(self._node_home_url)
 
     def _await_auth(self, page) -> None:
-        """Poll until the login redirect lands *page* on a phNN node and the
-        session cookie authenticates there, on a short fuse so a wrong
-        password fails fast. Pins and caches the discovered node as soon as it
-        appears; restores the previous pin if the handoff fails, so a caller
-        that survives LoginFailed isn't left on a half-migrated pin that
-        disagrees with the node cache. Never echoes the credentials."""
+        """Poll until the login authenticates, on a short fuse so a wrong
+        password fails fast.
+
+        The post-login redirect URL is the authoritative node signal: when the
+        page lands on a phNN host, that node is pinned and cached. But the
+        navigation is client-JS driven and can fail while the cookie handoff
+        itself succeeded (observed headless 2026-07-13: session live, page
+        parked on www) — so when the page stays off-node, the CURRENT pin is
+        probed as a fallback. A successful probe is safe to accept: it demands
+        a 200 from the pinned host without redirecting off it, which the
+        sticky-node cookie only produces on the right node. A new node is
+        still never pinned from a probe — only from the redirect. Restores the
+        previous pin if the handoff fails, so a caller that survives
+        LoginFailed isn't left on a half-migrated pin that disagrees with the
+        node cache. Never echoes the credentials."""
         previous = self._host
         deadline = time.monotonic() + self.config.auth_handoff_timeout_s
         while time.monotonic() < deadline:
-            host = node_host(page.url)
+            # Read the URL once per poll: the page navigates concurrently, and
+            # two reads in one iteration can describe two different pages.
+            page_url = page.url
+            host = node_host(page_url)
             if host is not None and host != self._host:
                 logger.info("Login assigned to node %s; pinning session there", host)
                 self._pin(host)
-            if host is not None and self.is_authenticated():
-                self._cache_node(host)
-                logger.info("Session is live on %s.", host)
+            if self.is_authenticated():
+                self._cache_node(self._host)
+                if host is None:
+                    logger.info(
+                        "Session is live on %s while the browser page is still on %s — "
+                        "accepting the cookie handoff without waiting for the "
+                        "client-side navigation.",
+                        self._host, _url_host(page_url),
+                    )
+                else:
+                    logger.info("Session is live on %s.", self._host)
                 return
+            logger.debug("login handoff pending; browser page is on %s", _url_host(page_url))
             time.sleep(2)
         if self._host != previous:
             self._pin(previous)
+        # Captured fresh at failure time — the last in-loop reading could be a
+        # whole poll interval stale.
         raise LoginFailed(
             f"login did not authenticate within {self.config.auth_handoff_timeout_s:.0f}s — "
             "the user ID or password may be wrong, the login page changed, or the "
-            "redirect never reached a phNN.colfinancial.com app node"
+            "redirect never reached a phNN.colfinancial.com app node "
+            f"(browser page ended on host {_url_host(page.url)!r})"
         )
 
     def relogin(self) -> None:
@@ -332,9 +436,11 @@ class SessionManager:
         logout detection.
 
         Re-syncs the browser cookies first, so this touches the Playwright
-        context and **must only be called from the main thread** (the sync API
-        is bound to the greenlet that created it). The background keep-alive
-        uses the httpx-only path instead.
+        context and **must only be called from the thread that ran start()**
+        (the sync API is bound to the greenlet that created it) — in the CLI
+        that is the single turn-executor thread owned by ``__main__``, which
+        all REPL and Discord turns run on. The background keep-alive uses the
+        httpx-only path instead.
         """
         self._sync_cookies()
         return self._get_fragment(path, params)

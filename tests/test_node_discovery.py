@@ -92,19 +92,40 @@ def test_await_auth_pins_and_caches_the_redirect_node(tmp_path, monkeypatch):
     assert (tmp_path / "node").read_text().strip() == "ph1.colfinancial.com"
 
 
-def test_await_auth_never_probes_while_off_node(tmp_path, monkeypatch):
-    # Stuck on the www login page: no node to pin, so no auth probe should
-    # fire, and the handoff must fail with LoginFailed at the deadline.
+def test_await_auth_off_node_and_unauthenticated_fails_without_pinning(tmp_path, monkeypatch):
+    # Stuck on the www login page with no live session (e.g. wrong password):
+    # the handoff must fail at the deadline, and the off-node probe must not
+    # have pinned or cached anything.
     cfg = Settings(node_cache_file=tmp_path / "node", auth_handoff_timeout_s=0.05)
     mgr = SessionManager(cfg)
+    default_host = mgr._host
     monkeypatch.setattr(time, "sleep", lambda s: None)
-    monkeypatch.setattr(
-        mgr, "is_authenticated", lambda: pytest.fail("must not probe before a node is assigned")
-    )
+    monkeypatch.setattr(mgr, "is_authenticated", lambda: False)
 
-    with pytest.raises(LoginFailed):
+    with pytest.raises(LoginFailed) as excinfo:
         mgr._await_auth(_FakePage("https://www.colfinancial.com/ape/Final2/home/HOME_NL_MAIN.asp"))
+    assert mgr._host == default_host
     assert not (tmp_path / "node").exists()
+    # The failure names the host the page was stuck on (host ONLY — the
+    # login-flow URL's path/query must never leak into the message).
+    assert "www.colfinancial.com" in str(excinfo.value)
+    assert "HOME_NL_MAIN" not in str(excinfo.value)
+
+
+def test_await_auth_accepts_cookie_handoff_when_redirect_never_ran(tmp_path, monkeypatch):
+    """The client-JS navigation to the phNN node can fail while the cookie
+    handoff succeeded (observed headless 2026-07-13). A successful probe of
+    the CURRENT pin is accepted — but a probe must never pin a NEW node; only
+    the redirect URL may do that."""
+    cfg = Settings(node_cache_file=tmp_path / "node", auth_handoff_timeout_s=0.05)
+    mgr = SessionManager(cfg)
+    default_host = mgr._host
+    monkeypatch.setattr(mgr, "is_authenticated", lambda: True)
+
+    mgr._await_auth(_FakePage("https://www.colfinancial.com/ape/Final2/home/HOME_NL_MAIN.asp"))
+
+    assert mgr._host == default_host  # pin unchanged — no new node invented
+    assert (tmp_path / "node").read_text().strip() == default_host
 
 
 def test_await_auth_restores_previous_pin_on_failure(tmp_path, monkeypatch):

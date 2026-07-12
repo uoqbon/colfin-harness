@@ -34,6 +34,12 @@ The REPL auto-fills the login form (password via a secure no-echo prompt, only w
 profile is cold), ensures a local `mlx_vlm.server` is up (spawning one if absent, reusing
 a warm one), then answers questions with conversational context carried across turns.
 
+An optional Discord front-end **auto-starts iff** a bot token exists in the macOS
+Keychain (`security add-generic-password -s colfin-discord-bot -a bot -w`); force with
+`--discord` / `--no-discord`. It answers only user IDs in `COLFIN_DISCORD_ALLOWED_USERS`
+(empty allowlist = answers no one), text only. The token comes from the Keychain **only**
+— never env vars, config, or Settings fields. See `docs/discord-bot.md`.
+
 ## Architecture
 
 - `src/colfin_harness/session/` — Playwright persistent profile. A cold profile is
@@ -53,6 +59,13 @@ a warm one), then answers questions with conversational context carried across t
   ASP markup has no stable per-field ids on values.
 - `src/colfin_harness/agents/` — thin agents over `FragmentSource` (anything with
   `fetch_fragment`); tests inject fakes, never a live session.
+- `src/colfin_harness/conversation.py` — front-end-agnostic core (`answer_task`,
+  `trim_history`) shared by the REPL and `discord_bot.py`. There is one browser session
+  and one model server, so all front-ends serialize turns through a single shared
+  `threading.Lock` created in `__main__`. `discord_bot.py` gates messages by allowlist
+  (fail closed), keeps per-channel history, and runs turns on a 1-worker executor under
+  that lock; `keychain.py` reads the bot token from the macOS Keychain (never env — the
+  model subprocess inherits env vars).
 - `src/colfin_harness/orchestrator/` — Gemma has **no native function calling**: tools
   are invoked via one fenced-JSON object per model turn, with defensive extraction and
   retry-with-error-feedback. New tools go in `tools.py:build_default_registry`.

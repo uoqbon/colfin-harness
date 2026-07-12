@@ -3,6 +3,8 @@ carry/trim, and one silent re-login on expiry. Driven by a scripted
 orchestrator and fake input; no browser, model, or network."""
 
 import builtins
+import threading
+from concurrent.futures import ThreadPoolExecutor
 
 from colfin_harness import __main__ as cli
 from colfin_harness.exceptions import LoginFailed, SessionExpired
@@ -109,6 +111,37 @@ def test_trim_history_bounds_chars():
     cli.trim_history(history)
     assert len(history) == 1
     assert history[0].question == "q1"  # oldest dropped
+
+
+class RecordingLock:
+    """A context-manager lock that records which thread acquires it."""
+
+    def __init__(self):
+        self._lock = threading.Lock()
+        self.acquired_on = []
+
+    def __enter__(self):
+        self._lock.acquire()
+        self.acquired_on.append(threading.current_thread().name)
+        return self
+
+    def __exit__(self, *exc_info):
+        self._lock.release()
+
+
+def test_repl_acquires_lock_on_turn_executor_thread(monkeypatch):
+    # Deadlock regression: the REPL must never hold turn_lock on the main
+    # thread while waiting on the single-worker executor — a Discord turn
+    # already occupying that worker (blocked on the same lock) would deadlock
+    # both front-ends. The lock must be taken inside the executor task.
+    _feed(monkeypatch, ["q", "exit"])
+    orch = FakeOrchestrator(["a"])
+    lock = RecordingLock()
+    with ThreadPoolExecutor(max_workers=1, thread_name_prefix="test-turn") as executor:
+        cli.run_repl(orch, FakeSession(), [], turn_lock=lock, turn_executor=executor)
+    assert len(lock.acquired_on) == 1
+    # The executor thread (prefix, not exact CPython naming), never MainThread.
+    assert lock.acquired_on[0].startswith("test-turn")
 
 
 def test_resolve_settings_omitted_keeps_base():

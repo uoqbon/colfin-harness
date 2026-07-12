@@ -70,13 +70,28 @@ credential prompt. See [Credentials and security](#credentials-and-security).
 
 Run the browser without a visible window with `--headless` (equivalently
 `COLFIN_HEADLESS=true`); `--no-headless` forces a visible window even when the env var
-is set. The vision lane still screenshots the live frameset in headless mode, but you
+is set. Headless runs use the full Chromium build in headless mode (not Playwright's
+stripped "headless shell") with a normalized user agent, so the requests COL sees are
+identical to a headed run — the login backend never completes the post-login redirect
+for a browser that is detectably headless (`HeadlessChrome` user agent or `Sec-CH-UA`,
+missing `Accept-Language`). The vision lane still screenshots the live frameset in headless mode, but you
 won't be able to watch — so prefer a headed run the first time, when a cold profile
 needs an automated login.
 
 ```bash
 uv run python -m colfin_harness --headless --user 1234-5678
 ```
+
+### Discord bot front-end (optional)
+
+The harness can also answer over Discord, using the same orchestrator and session as the
+REPL (turns are strictly serialized across both). It **auto-starts iff** a bot token
+exists in the macOS Keychain (`security add-generic-password -s colfin-discord-bot -a bot
+-w`) and answers only user IDs allowlisted in `COLFIN_DISCORD_ALLOWED_USERS` — an empty
+allowlist answers no one. Force it on/off with `--discord` / `--no-discord`. The bot
+sends **text only** (never screenshots or attachments), and the token is read from the
+Keychain at runtime — never from env vars, config, or disk. Setup, allowlisting, and
+privacy notes: [docs/discord-bot.md](docs/discord-bot.md).
 
 ### Choosing the model
 
