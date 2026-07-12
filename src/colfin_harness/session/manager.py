@@ -280,8 +280,12 @@ class SessionManager:
         """Fill and submit the COL login form, then confirm the cookie handoff.
 
         The user ID's two halves go to txtUser1/txtUser2; the password to
-        txtPassword. We submit by pressing Enter in the password field so the
-        form's natural submit path (default button / onsubmit) fires. The
+        txtPassword. We submit exactly the way the page's own LOG IN button
+        does — its onclick runs ``CheckSubmit()``, which clicks the hidden
+        ``cmdLogOn`` submit control — rather than relying on Enter-key
+        implicit form submission, which depends on a rendering-sensitive
+        default-button rule (the submit control is display:none) and is the
+        kind of corner that can behave differently headless. The
         redirect lands the browser on the sticky phNN node assigned to this
         login — that host is discovered, pinned, and cached before the cookie
         handoff is confirmed. On success the page is moved onto the
@@ -301,10 +305,29 @@ class SessionManager:
         page.fill("#login input[name='txtUser1']", user1)
         page.fill("#login input[name='txtUser2']", user2)
         page.fill("#login input[name='txtPassword']", creds.password)
-        # If the live page has no default submit button, switch this to clicking
-        # the specific control or `page.locator("#login").evaluate("f=>f.submit()")`.
-        page.press("#login input[name='txtPassword']", "Enter")
-        self._await_auth(page)
+        # Log the login flow's document requests while we wait for the handoff
+        # (method/host/path/status ONLY — never query strings, never bodies:
+        # the credentials travel in the POST body, which is never touched).
+        def _log_login_response(response) -> None:
+            try:
+                if response.request.resource_type == "document":
+                    url = httpx.URL(response.url)
+                    logger.debug(
+                        "login flow: %s %s%s -> %s",
+                        response.request.method, url.host, url.path, response.status,
+                    )
+            except Exception:  # diagnostics must never break the login
+                pass
+
+        page.on("response", _log_login_response)
+        try:
+            # The same call the page's own LOG IN button makes (CheckSubmit()).
+            # The control is display:none, so it must be clicked via the DOM —
+            # Playwright's click() would wait for visibility forever.
+            page.evaluate("document.getElementById('cmdLogOn').click()")
+            self._await_auth(page)
+        finally:
+            page.remove_listener("response", _log_login_response)
         # Land on the app home page (on the discovered node) — mirrors the
         # warm-profile path and gets the browser off the login page before any
         # screenshot tool can fire. Must be HOME/HOME.asp: the FINAL2_STARTER

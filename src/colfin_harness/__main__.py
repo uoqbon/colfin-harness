@@ -148,6 +148,12 @@ def main() -> int:
         "Locked to the Gemma family on MLX — see --list-models.",
     )
     parser.add_argument(
+        "--verbose",
+        action="store_true",
+        help="enable DEBUG logging for the harness (login handoff flow, "
+        "keep-alive pings); never logs credentials, query strings, or tokens",
+    )
+    parser.add_argument(
         "--discord",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -161,6 +167,11 @@ def main() -> int:
         help="list the built-in Gemma-on-MLX model aliases and exit",
     )
     args = parser.parse_args()
+
+    if args.verbose:
+        # Only the harness's own loggers — third-party DEBUG (httpx & co.)
+        # stays off. The harness never logs credentials or query strings.
+        logging.getLogger("colfin_harness").setLevel(logging.DEBUG)
 
     if args.list_models:
         print("Built-in Gemma-on-MLX aliases (--model <alias>):")
