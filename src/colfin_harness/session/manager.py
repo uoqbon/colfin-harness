@@ -83,12 +83,11 @@ def _headless_user_agent(playwright) -> str:
     normalize it. Costs one extra ~fast headless launch, headless mode only.
 
     Scope: this patches the ``User-Agent`` request header and
-    ``navigator.userAgent`` — the vector COL's classic-ASP login checks.
-    Client hints (``Sec-CH-UA`` / ``navigator.userAgentData``) are NOT
-    rewritten; if COL ever starts consuming those, headless login will
-    regress again and this is the place to look.
+    ``navigator.userAgent``. Sec-CH-UA client hints and Accept-Language are
+    handled separately, by launching the full Chromium build
+    (``channel="chromium"``) instead of the headless shell — see start().
     """
-    browser = playwright.chromium.launch(headless=True)
+    browser = playwright.chromium.launch(headless=True, channel="chromium")
     try:
         ua = browser.new_page().evaluate("navigator.userAgent")
     finally:
@@ -218,11 +217,18 @@ class SessionManager:
         self._playwright = sync_playwright().start()
         launch_kwargs: dict[str, object] = {}
         if self.config.headless:
-            # Headless Chromium announces itself as "HeadlessChrome" in the
-            # user agent, and COL's login backend answers such a POST without
+            # COL's login backend answers a headless browser's POST without
             # ever redirecting to the phNN app node (observed 2026-07-13:
-            # identical login timed out headless, succeeded headed). Present
-            # the same build as regular Chrome.
+            # identical login timed out headless, succeeded headed). Playwright's
+            # default headless=True runs the stripped "headless shell" build,
+            # which is detectably different on the wire even with a rewritten
+            # user agent: it omits Accept-Language entirely and brands
+            # Sec-CH-UA as "HeadlessChrome" (measured against a local capture
+            # server). channel="chromium" runs the FULL Chromium build in its
+            # headless mode instead, whose request headers are identical to a
+            # headed run; the UA string is the one remaining tell, normalized
+            # below.
+            launch_kwargs["channel"] = "chromium"
             launch_kwargs["user_agent"] = _headless_user_agent(self._playwright)
         self._context = self._playwright.chromium.launch_persistent_context(
             user_data_dir=str(self.config.profile_dir),
