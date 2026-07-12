@@ -70,7 +70,8 @@ credential prompt. See [Credentials and security](#credentials-and-security).
 
 Run the browser without a visible window with `--headless` (equivalently
 `COLFIN_HEADLESS=true`); `--no-headless` forces a visible window even when the env var
-is set. The vision lane still screenshots the live frameset in headless mode, but you
+is set. Headless runs present a regular Chrome user agent — COL's login backend never
+completes the post-login redirect for a browser announcing itself as `HeadlessChrome`. The vision lane still screenshots the live frameset in headless mode, but you
 won't be able to watch — so prefer a headed run the first time, when a cold profile
 needs an automated login.
 

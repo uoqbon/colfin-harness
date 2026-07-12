@@ -102,9 +102,13 @@ def test_await_auth_never_probes_while_off_node(tmp_path, monkeypatch):
         mgr, "is_authenticated", lambda: pytest.fail("must not probe before a node is assigned")
     )
 
-    with pytest.raises(LoginFailed):
+    with pytest.raises(LoginFailed) as excinfo:
         mgr._await_auth(_FakePage("https://www.colfinancial.com/ape/Final2/home/HOME_NL_MAIN.asp"))
     assert not (tmp_path / "node").exists()
+    # The failure names the host the page was stuck on (host ONLY — the
+    # login-flow URL's path/query must never leak into the message).
+    assert "www.colfinancial.com" in str(excinfo.value)
+    assert "HOME_NL_MAIN" not in str(excinfo.value)
 
 
 def test_await_auth_restores_previous_pin_on_failure(tmp_path, monkeypatch):

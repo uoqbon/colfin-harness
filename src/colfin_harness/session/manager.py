@@ -72,6 +72,23 @@ def looks_logged_out(fragment: str) -> bool:
 _NODE_HOST_RE = re.compile(r"ph\d+\.colfinancial\.com")
 
 
+def normalize_user_agent(user_agent: str) -> str:
+    """Rewrite a headless Chromium UA to its regular-Chrome equivalent."""
+    return user_agent.replace("HeadlessChrome", "Chrome")
+
+
+def _headless_user_agent(playwright) -> str:
+    """Discover the current headless build's real UA from a throwaway browser
+    (it changes with every Chromium bump, so it can't be hardcoded) and
+    normalize it. Costs one extra ~fast headless launch, headless mode only."""
+    browser = playwright.chromium.launch(headless=True)
+    try:
+        ua = browser.new_page().evaluate("navigator.userAgent")
+    finally:
+        browser.close()
+    return normalize_user_agent(ua)
+
+
 def node_host(url: str) -> str | None:
     """The sticky ``phNN.colfinancial.com`` host of *url*, or None if the URL
     is not on an app node (login page on www, blank page, garbage)."""
@@ -174,10 +191,19 @@ class SessionManager:
 
         self.config.profile_dir.mkdir(parents=True, exist_ok=True)
         self._playwright = sync_playwright().start()
+        launch_kwargs: dict[str, object] = {}
+        if self.config.headless:
+            # Headless Chromium announces itself as "HeadlessChrome" in the
+            # user agent, and COL's login backend answers such a POST without
+            # ever redirecting to the phNN app node (observed 2026-07-13:
+            # identical login timed out headless, succeeded headed). Present
+            # the same build as regular Chrome.
+            launch_kwargs["user_agent"] = _headless_user_agent(self._playwright)
         self._context = self._playwright.chromium.launch_persistent_context(
             user_data_dir=str(self.config.profile_dir),
             headless=self.config.headless,
             viewport={"width": 1280, "height": 900},
+            **launch_kwargs,
         )
         page = self._context.pages[0] if self._context.pages else self._context.new_page()
         # Probe the node the previous login was pinned to — a warm session is
@@ -263,7 +289,14 @@ class SessionManager:
         disagrees with the node cache. Never echoes the credentials."""
         previous = self._host
         deadline = time.monotonic() + self.config.auth_handoff_timeout_s
+        page_host = "?"
         while time.monotonic() < deadline:
+            # Host only, ever — a login-flow URL's path/query must never reach
+            # the log or an exception message.
+            try:
+                page_host = httpx.URL(page.url).host or "?"
+            except Exception:
+                page_host = "?"
             host = node_host(page.url)
             if host is not None and host != self._host:
                 logger.info("Login assigned to node %s; pinning session there", host)
@@ -272,13 +305,15 @@ class SessionManager:
                 self._cache_node(host)
                 logger.info("Session is live on %s.", host)
                 return
+            logger.debug("login handoff pending; browser page is on %s", page_host)
             time.sleep(2)
         if self._host != previous:
             self._pin(previous)
         raise LoginFailed(
             f"login did not authenticate within {self.config.auth_handoff_timeout_s:.0f}s — "
             "the user ID or password may be wrong, the login page changed, or the "
-            "redirect never reached a phNN.colfinancial.com app node"
+            "redirect never reached a phNN.colfinancial.com app node "
+            f"(browser page ended on host {page_host!r})"
         )
 
     def relogin(self) -> None:
