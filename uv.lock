@@ -277,7 +277,7 @@ requires-dist = [
     { name = "httpx", specifier = ">=0.28" },
     { name = "lxml", specifier = ">=5.3" },
     { name = "mlx", marker = "sys_platform == 'darwin'", specifier = ">=0.32.0" },
-    { name = "mlx-vlm", marker = "sys_platform == 'darwin'", specifier = "==0.6.3" },
+    { name = "mlx-vlm", marker = "sys_platform == 'darwin'", specifier = "==0.6.5" },
     { name = "playwright", specifier = ">=1.61.0" },
     { name = "pydantic", specifier = ">=2.9" },
     { name = "pydantic-settings", specifier = ">=2.14.2" },
@@ -791,7 +791,7 @@ wheels = [
 
 [[package]]
 name = "mlx-vlm"
-version = "0.6.3"
+version = "0.6.5"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "datasets", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
@@ -804,15 +804,16 @@ dependencies = [
     { name = "numpy", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
     { name = "opencv-python", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
     { name = "pillow", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
+    { name = "python-multipart", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
     { name = "requests", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
     { name = "starlette", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
     { name = "tqdm", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
     { name = "transformers", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
     { name = "uvicorn", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/a3/60/e774080c90dd5a9d6ed51e3ff1c145243199048714bbca61cdf65e278a69/mlx_vlm-0.6.3.tar.gz", hash = "sha256:f5541eb7c22345a951f7fb78376ed80e8e42bd7c179fb0daa40a21592c7b2adb", size = 1360405, upload-time = "2026-06-10T18:06:34.457Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/e5/2f/c21849eec32a04945cc6f242e4023a0ff52035e4da839f7d765827136c40/mlx_vlm-0.6.5.tar.gz", hash = "sha256:275a2db6be44226ae0d8492f4ecc5e5b9665744de8da1f65a96b9fe1ce3bc13d", size = 1502790, upload-time = "2026-07-16T21:40:28.778Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/95/47/196df650f46f046060c695c3b2378e09afdbe132abfbff7d6fce076b4968/mlx_vlm-0.6.3-py3-none-any.whl", hash = "sha256:27cf5afcaceb1bf7fb66e9a21f8d7344b1ac3964ff8908a5318fe5191dab7ff6", size = 1624640, upload-time = "2026-06-10T18:06:32.799Z" },
+    { url = "https://files.pythonhosted.org/packages/cc/ff/2c4cfa3eebb7f0e255b918ecee053aba5096a9141a9ee8a675573192b3cb/mlx_vlm-0.6.5-py3-none-any.whl", hash = "sha256:1cc3a8a12cd674bfe3bc7d64c8e511948baf6103240c5ba87585082a2a7da8aa", size = 1804546, upload-time = "2026-07-16T21:40:27.107Z" },
 ]
 
 [[package]]
@@ -1303,6 +1304,15 @@ wheels = [
 ]
 
 [[package]]
+name = "python-multipart"
+version = "0.0.32"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/5b/42/55c32bb9b12693c092ad250a0e82edb5b31ddeda6eb772de5f308b3804ad/python_multipart-0.0.32.tar.gz", hash = "sha256:be54b7f3fa167bb83e4fcd936b887b708f4e57fe75911c02aebf53efaf8d938e", size = 46881, upload-time = "2026-06-04T16:18:58.647Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/e1/04/e8135ebd1ad02c56ec633277529b2602ff99ff634be76cdba5744cf554fd/python_multipart-0.0.32-py3-none-any.whl", hash = "sha256:ff6d3f776f16878c894e52e107296ffc890e913c611b1a4ec6c44e2821fe2e23", size = 30042, upload-time = "2026-06-04T16:18:57.319Z" },
+]
+
+[[package]]
 name = "pyyaml"
 version = "6.0.3"
 source = { registry = "https://pypi.org/simple" }
@@ -1498,7 +1508,7 @@ wheels = [
 
 [[package]]
 name = "transformers"
-version = "5.12.0"
+version = "5.14.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "huggingface-hub", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
@@ -1511,9 +1521,9 @@ dependencies = [
     { name = "tqdm", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
     { name = "typer", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/0c/f9/4552e2ba55db1c943aea0d4c09a32e9cbe5445b9eabe9856900de503dc8f/transformers-5.12.0.tar.gz", hash = "sha256:f0cf42ae1464c2eb41e7e0e66d7fd4b66145f48af17093b4cc0b2e9781faa7f4", size = 8923020, upload-time = "2026-06-12T14:39:20.43Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/5a/fb/2a2ba88f325e68a921d8b69ff63b477830b2e73ade9a3c8c8cab2f06d741/transformers-5.14.1.tar.gz", hash = "sha256:60d196c27781eacf8637e2b533f517582907ad6f9ae142046d6b69431a5b2173", size = 9295927, upload-time = "2026-07-16T09:41:57.773Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/ff/1f/d385913c38e900d23b728a4188fee625f2fccb306aeebc59be9d91404a5a/transformers-5.12.0-py3-none-any.whl", hash = "sha256:500be9eb644ede81c3103eee7687fc36d05dd75d1c76686c3820b26396fe7c7c", size = 11150246, upload-time = "2026-06-12T14:39:17.009Z" },
+    { url = "https://files.pythonhosted.org/packages/6f/67/8d85ca2323233ae3c0365a659c4e52ee1f587b440e4bc577e7d8e4416d0f/transformers-5.14.1-py3-none-any.whl", hash = "sha256:9db974c4079ede2d1a3ea7ca5a240df33f2cc26fc2b36ba64c5f2a4f43b6e725", size = 11625234, upload-time = "2026-07-16T09:41:54.143Z" },
 ]
 
 [[package]]
