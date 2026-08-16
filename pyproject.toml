@@ -14,7 +14,7 @@ dependencies = [
     "beautifulsoup4>=4.12",
     "lxml>=5.3",
     "pydantic>=2.9",
-    "pydantic-settings>=2.14.2",
+    "pydantic-settings>=2.15.0",
     "discord-py>=2.4",
 ]
 
