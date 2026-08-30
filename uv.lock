@@ -3,10 +3,10 @@ revision = 3
 requires-python = ">=3.11, <3.14"
 resolution-markers = [
     "python_full_version >= '3.13' and sys_platform == 'win32'",
-    "python_full_version < '3.13' and sys_platform == 'win32'",
     "python_full_version >= '3.13' and sys_platform == 'emscripten'",
-    "python_full_version < '3.13' and sys_platform == 'emscripten'",
     "python_full_version >= '3.13' and sys_platform != 'emscripten' and sys_platform != 'win32'",
+    "python_full_version < '3.13' and sys_platform == 'win32'",
+    "python_full_version < '3.13' and sys_platform == 'emscripten'",
     "python_full_version < '3.13' and sys_platform != 'emscripten' and sys_platform != 'win32'",
 ]
 
@@ -216,7 +216,7 @@ name = "cffi"
 version = "2.0.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "pycparser", marker = "implementation_name != 'PyPy' and sys_platform != 'emscripten' and sys_platform != 'win32'" },
+    { name = "pycparser", marker = "implementation_name != 'PyPy'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/eb/56/b1ba7935a17738ae8453301356628e8147c79dbb825bcbc73dc7401f9846/cffi-2.0.0.tar.gz", hash = "sha256:44d1b5909021139fe36001ae048dbdde8214afa20200eda0f64c068cac5d5529", size = 523588, upload-time = "2025-09-08T23:24:04.541Z" }
 wheels = [
@@ -300,20 +300,20 @@ name = "datasets"
 version = "5.0.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "dill", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
-    { name = "filelock", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
-    { name = "fsspec", extra = ["http"], marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
-    { name = "httpx", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
-    { name = "huggingface-hub", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
-    { name = "multiprocess", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
-    { name = "numpy", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
-    { name = "packaging", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
-    { name = "pandas", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
-    { name = "pyarrow", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
-    { name = "pyyaml", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
-    { name = "requests", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
-    { name = "tqdm", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
-    { name = "xxhash", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
+    { name = "dill" },
+    { name = "filelock" },
+    { name = "fsspec", extra = ["http"] },
+    { name = "httpx" },
+    { name = "huggingface-hub" },
+    { name = "multiprocess" },
+    { name = "numpy" },
+    { name = "packaging" },
+    { name = "pandas" },
+    { name = "pyarrow" },
+    { name = "pyyaml" },
+    { name = "requests" },
+    { name = "tqdm" },
+    { name = "xxhash" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/d9/85/ce4f780c32f7e36d71257f1c27e8ba898ebe379cb54f211f5f2013f2c219/datasets-5.0.0.tar.gz", hash = "sha256:83dbbbdb07a33b82192b8c419deb18739b138ee2ce1a322d55ce6b100954ec1a", size = 631708, upload-time = "2026-06-05T13:18:26.124Z" }
 wheels = [
@@ -347,11 +347,11 @@ name = "fastapi"
 version = "0.136.3"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "annotated-doc", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
-    { name = "pydantic", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
-    { name = "starlette", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
-    { name = "typing-extensions", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
-    { name = "typing-inspection", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
+    { name = "annotated-doc" },
+    { name = "pydantic" },
+    { name = "starlette" },
+    { name = "typing-extensions" },
+    { name = "typing-inspection" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/81/2d/ff8d91d7b564d464629a0fd50a4489c97fcb836ac230bf3a7269232a9b1f/fastapi-0.136.3.tar.gz", hash = "sha256:e487fae93ad408e6f47641ee4dfe389864fd7bec92e547ea8498fc13f43e83ab", size = 396410, upload-time = "2026-05-23T18:53:15.192Z" }
 wheels = [
@@ -451,7 +451,7 @@ wheels = [
 
 [package.optional-dependencies]
 http = [
-    { name = "aiohttp", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
+    { name = "aiohttp" },
 ]
 
 [[package]]
@@ -546,16 +546,16 @@ name = "huggingface-hub"
 version = "1.19.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "click", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
-    { name = "filelock", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
-    { name = "fsspec", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
-    { name = "hf-xet", marker = "(platform_machine == 'AMD64' and sys_platform != 'emscripten' and sys_platform != 'win32') or (platform_machine == 'aarch64' and sys_platform != 'emscripten' and sys_platform != 'win32') or (platform_machine == 'amd64' and sys_platform != 'emscripten' and sys_platform != 'win32') or (platform_machine == 'arm64' and sys_platform != 'emscripten' and sys_platform != 'win32') or (platform_machine == 'x86_64' and sys_platform != 'emscripten' and sys_platform != 'win32')" },
-    { name = "httpx", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
-    { name = "packaging", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
-    { name = "pyyaml", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
-    { name = "tqdm", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
-    { name = "typer", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
-    { name = "typing-extensions", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
+    { name = "click" },
+    { name = "filelock" },
+    { name = "fsspec" },
+    { name = "hf-xet", marker = "platform_machine == 'AMD64' or platform_machine == 'aarch64' or platform_machine == 'amd64' or platform_machine == 'arm64' or platform_machine == 'x86_64'" },
+    { name = "httpx" },
+    { name = "packaging" },
+    { name = "pyyaml" },
+    { name = "tqdm" },
+    { name = "typer" },
+    { name = "typing-extensions" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/88/27/629cfe58c582f92ded066c4a07d1a057ff617118ab7973200f770bd853cb/huggingface_hub-1.19.0.tar.gz", hash = "sha256:fd771622182d40977272a923953ee3b1b13538f9f8a7f5d78398f10af0f1c0bd", size = 824721, upload-time = "2026-06-11T12:33:18.665Z" }
 wheels = [
@@ -585,7 +585,7 @@ name = "jinja2"
 version = "3.1.6"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "markupsafe", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
+    { name = "markupsafe" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/df/bf/f7da0350254c0ed7c72f3e33cef02e048281fec7ecec5f032d4aac52226b/jinja2-3.1.6.tar.gz", hash = "sha256:0137fb05990d35f1275a587e9aee6d56da821fc83491a0fb838183be43f66d6d", size = 245115, upload-time = "2025-03-05T20:05:02.478Z" }
 wheels = [
@@ -673,7 +673,7 @@ name = "markdown-it-py"
 version = "4.2.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "mdurl", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
+    { name = "mdurl" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/06/ff/7841249c247aa650a76b9ee4bbaeae59370dc8bfd2f6c01f3630c35eb134/markdown_it_py-4.2.0.tar.gz", hash = "sha256:04a21681d6fbb623de53f6f364d352309d4094dd4194040a10fd51833e418d49", size = 82454, upload-time = "2026-05-07T12:08:28.36Z" }
 wheels = [
@@ -710,7 +710,7 @@ name = "miniaudio"
 version = "1.71"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "cffi", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
+    { name = "cffi" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/d8/d5/e5439dc08561f73656bfeb3340fc64ab63163e101426593d8fb9a025ff1e/miniaudio-1.71.tar.gz", hash = "sha256:ff51e2887bb673e2e757752b586b3dc924d59aa5fbcae9bbc45f4a111bd3262b", size = 1116480, upload-time = "2026-04-29T21:20:38.182Z" }
 wheels = [
@@ -724,21 +724,24 @@ wheels = [
 
 [[package]]
 name = "mlx"
-version = "0.32.0"
+version = "0.32.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "mlx-metal", marker = "sys_platform == 'darwin'" },
+    { name = "mlx-metal" },
 ]
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/3e/c7/cb62301b01dbccd66b256cab0c98fc29e7533dd76aa599fe44c1bb1f4168/mlx-0.32.0-cp311-cp311-macosx_14_0_arm64.whl", hash = "sha256:72c605368d145c756877057d7e3c54f169c9899fe1f83232bfb3a6342561e234", size = 562792, upload-time = "2026-07-07T17:55:35.24Z" },
-    { url = "https://files.pythonhosted.org/packages/1a/b1/c2eba5bb18c94a9fe1b5d6599f18ba2ef5de2d8b42439716d9241ab196c4/mlx-0.32.0-cp311-cp311-macosx_15_0_arm64.whl", hash = "sha256:0a0e38a409b9cae29647ec9e75ce9747b224ce7e5d91adbfad7eac37b6118ffd", size = 562792, upload-time = "2026-07-07T17:55:36.876Z" },
-    { url = "https://files.pythonhosted.org/packages/1f/43/5b481bfb8f1234153fd8fef9dcacfe34860b0934eb507c0eb811ba599afe/mlx-0.32.0-cp311-cp311-macosx_26_0_arm64.whl", hash = "sha256:2a180cd39ac68b397b85cc4658d0b8e0ab58166c2549fc9ab2ca5f99d15ef0c3", size = 562776, upload-time = "2026-07-07T17:55:38.314Z" },
-    { url = "https://files.pythonhosted.org/packages/aa/a6/489176d8a2a06137a299910057cc44dc3fccfb73151f7562fea2b75894d9/mlx-0.32.0-cp312-cp312-macosx_14_0_arm64.whl", hash = "sha256:ea5a594355c89c0095eaba413fd39d4caa8642fa13432dfb0c9354d141046467", size = 558889, upload-time = "2026-07-07T17:55:45.268Z" },
-    { url = "https://files.pythonhosted.org/packages/85/2a/5d1f1cb1b073c39c822e0c0be1e68f4ced6fd32ab15cf8bb1f448028842c/mlx-0.32.0-cp312-cp312-macosx_15_0_arm64.whl", hash = "sha256:e5f778001562ccce26cf6e5be1050d2afc78e2902bad206201ab9f5a6d0f886a", size = 558890, upload-time = "2026-07-07T17:55:46.701Z" },
-    { url = "https://files.pythonhosted.org/packages/0f/01/02110ceacf4efd00ec172f60b4cd42c8b1509ac50ffa65a6a77d723133aa/mlx-0.32.0-cp312-cp312-macosx_26_0_arm64.whl", hash = "sha256:8dfb577faa4dc413cfd0d6eb78f230d3b3b6169df4473e84408abdeb21346e9d", size = 558856, upload-time = "2026-07-07T17:55:48.09Z" },
-    { url = "https://files.pythonhosted.org/packages/b6/be/ddc888d4a20c7602da06ad1a244f495010c6c7d2457f6253e8fa3c99ceea/mlx-0.32.0-cp313-cp313-macosx_14_0_arm64.whl", hash = "sha256:abb786ee1e9638759be82583222fc7d09c5650ef90ad2b7c5da7d1931a8676dc", size = 558795, upload-time = "2026-07-07T17:55:54.907Z" },
-    { url = "https://files.pythonhosted.org/packages/38/b9/4f0ae7785fdb3fa7e44434908d832cbc7a9a1e096d046ac6fe953812c52c/mlx-0.32.0-cp313-cp313-macosx_15_0_arm64.whl", hash = "sha256:deb284f3a5cd0c3e87bed80c2bee9dcbf946bdad44d75592f6fb784da878c1c0", size = 558799, upload-time = "2026-07-07T17:55:56.844Z" },
-    { url = "https://files.pythonhosted.org/packages/4c/a8/7bc999ce5d09dfac8961dcda4ed47e173fca2857492f34599b237380f20d/mlx-0.32.0-cp313-cp313-macosx_26_0_arm64.whl", hash = "sha256:4192a2d02014a13a6a1030bf13dfb4e4fe05ec3ffa47678ee37da29111e25cb1", size = 558786, upload-time = "2026-07-07T17:55:58.272Z" },
+    { url = "https://files.pythonhosted.org/packages/4e/3c/f56f5de7188b0b5855046244b1ebb6f2055cc298c9f7336b69cc2013ad23/mlx-0.32.2-cp311-cp311-macosx_14_0_arm64.whl", hash = "sha256:238b50d2ee3917c836e73f9446011518b79ff094940eb0107fa6cd17d02a2eca", size = 625943, upload-time = "2026-08-25T10:31:33.737Z" },
+    { url = "https://files.pythonhosted.org/packages/c4/77/a1f7b2ca95b5c5106eb00268a950e351deb3348cd5b5433861619d3b0de0/mlx-0.32.2-cp311-cp311-macosx_15_0_arm64.whl", hash = "sha256:e507dc67d268cf78254e17756f25057198fe74791508fcbd1e6d967673a8d374", size = 625943, upload-time = "2026-08-25T10:31:35.241Z" },
+    { url = "https://files.pythonhosted.org/packages/16/f9/15c5b7313a73c33014e8082992a868b95b742c1966a57b684b7a3cffe597/mlx-0.32.2-cp311-cp311-macosx_26_0_arm64.whl", hash = "sha256:e0828c96a6b988afbe6f07cc39adc0470eba9121f7e356623a8fb9d9a6397533", size = 625981, upload-time = "2026-08-25T10:31:36.631Z" },
+    { url = "https://files.pythonhosted.org/packages/38/f7/5664e13821491559c953494e6705c818203d6880d713a0c22e12bead9564/mlx-0.32.2-cp312-cp312-macosx_14_0_arm64.whl", hash = "sha256:77217798a2b036bae9f213b851d4cde4581893787c9964458b7d471f86036bd6", size = 619370, upload-time = "2026-08-25T10:31:44.235Z" },
+    { url = "https://files.pythonhosted.org/packages/bc/be/c821eed5b7c13b42c114aec54c757545d6eeecce25d3212ea7d18dd79cfd/mlx-0.32.2-cp312-cp312-macosx_15_0_arm64.whl", hash = "sha256:cf63fd5c32258ab07523b06401c20ee2280bf56e26e991d05bf6fd8a4d42d1f6", size = 619376, upload-time = "2026-08-25T10:31:45.647Z" },
+    { url = "https://files.pythonhosted.org/packages/0b/eb/af6b1a8b45f24d22e4735c52e0696c66233bd477e1b9e9dbbef225bdf88b/mlx-0.32.2-cp312-cp312-macosx_26_0_arm64.whl", hash = "sha256:68560fd648c5bb900aa6f6765cd74c5a8abaf092d97d73584a57b7545966c227", size = 619488, upload-time = "2026-08-25T10:31:47.485Z" },
+    { url = "https://files.pythonhosted.org/packages/5e/d7/0f9717acf577621ff0899f311eaa16abbfd2ee5a5c2156313f49d080cb5f/mlx-0.32.2-cp313-cp313-macosx_14_0_arm64.whl", hash = "sha256:65d3d29b66045ed8dd2d8e437c8770de325843c364f7b7c38cd8ae90a7eec854", size = 619420, upload-time = "2026-08-25T10:31:55.042Z" },
+    { url = "https://files.pythonhosted.org/packages/2d/96/d333b83d04c31046d49d9e1f915c9da76eb264b8e4205bd36d428d09421f/mlx-0.32.2-cp313-cp313-macosx_15_0_arm64.whl", hash = "sha256:daebf84dfb857d70e87b1b98189a057e691e99a4a2b9f6f64cadebad917f8964", size = 619418, upload-time = "2026-08-25T10:31:56.722Z" },
+    { url = "https://files.pythonhosted.org/packages/38/96/9db8e27f384d83d3816ec7392c7a2b375979c14509d7f345d1fa3d05cac8/mlx-0.32.2-cp313-cp313-macosx_26_0_arm64.whl", hash = "sha256:df8c75e509de868fca148dfeb38d92ce956eed386569c87caeb72bd16d2d6962", size = 619417, upload-time = "2026-08-25T10:31:58.569Z" },
+    { url = "https://files.pythonhosted.org/packages/bf/86/c574112fc8193c6e032c4be3a394361dfa283a57e276a76538fa8da341df/mlx-0.32.2-cp313-cp313t-macosx_14_0_arm64.whl", hash = "sha256:dc5eb3cc30d4285f2734c368442f717599e97294663441cb42959e3b856d6898", size = 645041, upload-time = "2026-08-25T10:32:07.218Z" },
+    { url = "https://files.pythonhosted.org/packages/10/44/d50dd35a356323105f2d25aa5b463869e6dfe6e75cb2422e738472b6127a/mlx-0.32.2-cp313-cp313t-macosx_15_0_arm64.whl", hash = "sha256:c95a384de1a0c0ba18425344cad8ac87180e3c5c1921a42e2621475be5966bcf", size = 645042, upload-time = "2026-08-25T10:32:08.879Z" },
+    { url = "https://files.pythonhosted.org/packages/0f/a3/9feb2ed4bb045cb077beed6fec309154e3a4ec71ce6a714e8487d133e355/mlx-0.32.2-cp313-cp313t-macosx_26_0_arm64.whl", hash = "sha256:bc69bd1062b97028ae6b79522ed0bd635a2b133fe3c398c03b66b060c20d9240", size = 644908, upload-time = "2026-08-25T10:32:10.487Z" },
 ]
 
 [[package]]
@@ -746,15 +749,15 @@ name = "mlx-audio"
 version = "0.4.4"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "huggingface-hub", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
-    { name = "miniaudio", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
-    { name = "mlx", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
-    { name = "mlx-lm", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
-    { name = "numpy", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
-    { name = "scipy", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
-    { name = "sounddevice", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
-    { name = "tqdm", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
-    { name = "transformers", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
+    { name = "huggingface-hub" },
+    { name = "miniaudio" },
+    { name = "mlx" },
+    { name = "mlx-lm" },
+    { name = "numpy" },
+    { name = "scipy" },
+    { name = "sounddevice" },
+    { name = "tqdm" },
+    { name = "transformers" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/af/1e/f712c9f7997e5051c4da3b658f38162203bb703c750741984c8358c8b897/mlx_audio-0.4.4.tar.gz", hash = "sha256:d751e5f477517e4e7f04de5567318e2fe91b4606af5d7e4b2973603c4777814a", size = 1386491, upload-time = "2026-06-06T15:32:03.504Z" }
 wheels = [
@@ -766,13 +769,13 @@ name = "mlx-lm"
 version = "0.31.3"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "jinja2", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
-    { name = "mlx", marker = "sys_platform == 'darwin'" },
-    { name = "numpy", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
-    { name = "protobuf", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
-    { name = "pyyaml", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
-    { name = "sentencepiece", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
-    { name = "transformers", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
+    { name = "jinja2" },
+    { name = "mlx" },
+    { name = "numpy" },
+    { name = "protobuf" },
+    { name = "pyyaml" },
+    { name = "sentencepiece" },
+    { name = "transformers" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/84/94/9a38d6b0c6fcca995b9136c94eb7da1e9c5165652edf228b96b29960fa7a/mlx_lm-0.31.3.tar.gz", hash = "sha256:61eb0e3ba09444f77f874aff295401d7ccd20b39495cbbce0c782a15474ce733", size = 304318, upload-time = "2026-04-22T07:37:27.922Z" }
 wheels = [
@@ -781,12 +784,12 @@ wheels = [
 
 [[package]]
 name = "mlx-metal"
-version = "0.32.0"
+version = "0.32.2"
 source = { registry = "https://pypi.org/simple" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/d6/ef/d74ae99cfe9ddb59fd08abd14f47754c3d199291a93756903fa595b31b8a/mlx_metal-0.32.0-py3-none-macosx_14_0_arm64.whl", hash = "sha256:5b64b20ac24b0c401f489de01e8209edc4d372125201f19314e6f39e385322aa", size = 40824649, upload-time = "2026-07-07T17:55:20.7Z" },
-    { url = "https://files.pythonhosted.org/packages/d5/38/b96a3de98cfbb009592b3870af46ff63657b192f8d1e06c6c1faea5fbef3/mlx_metal-0.32.0-py3-none-macosx_15_0_arm64.whl", hash = "sha256:1bd94a1ce5b03a0c898771a3e759f0124300c6ab5155127906a1d50b1f3fcf19", size = 40818869, upload-time = "2026-07-07T17:55:25.059Z" },
-    { url = "https://files.pythonhosted.org/packages/dc/59/65d32520175379df33f107749193aa94ea9db069167a36a1a100ff689f62/mlx_metal-0.32.0-py3-none-macosx_26_0_arm64.whl", hash = "sha256:3af76a498d84804f66119800499f9d143d7dffb0878a0dd0d7c2846e58565fd7", size = 56511379, upload-time = "2026-07-07T17:55:36.045Z" },
+    { url = "https://files.pythonhosted.org/packages/f7/ab/ba1952908c5d2a5070cf1cfbfea0161c4751ea62299e2776819810917483/mlx_metal-0.32.2-py3-none-macosx_14_0_arm64.whl", hash = "sha256:3825fff379dbc107dd3413e564a06caeaa24819910ec49c0439e454c06a1b9b8", size = 42516623, upload-time = "2026-08-25T10:31:18.396Z" },
+    { url = "https://files.pythonhosted.org/packages/79/ec/34f37376e26d537fadffb99af3a760d6545e37f5e1a30a552baadf237fc5/mlx_metal-0.32.2-py3-none-macosx_15_0_arm64.whl", hash = "sha256:55a369250d220b2cf10213a87a2ac1b1a420608c5b35b1df4e7147ac8e32f121", size = 42512323, upload-time = "2026-08-25T10:31:22.673Z" },
+    { url = "https://files.pythonhosted.org/packages/dd/cd/4e50bf325100e7165e13d025f264362bf0009196269f9eaf87f2c6e738a2/mlx_metal-0.32.2-py3-none-macosx_26_0_arm64.whl", hash = "sha256:e6abeac9ac5265830c9c1541b6f96e9be37a85c2446763a46ad466c63a3837ab", size = 64367860, upload-time = "2026-08-25T10:31:28.056Z" },
 ]
 
 [[package]]
@@ -794,21 +797,21 @@ name = "mlx-vlm"
 version = "0.6.3"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "datasets", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
-    { name = "fastapi", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
-    { name = "llguidance", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
-    { name = "miniaudio", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
-    { name = "mlx", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
-    { name = "mlx-audio", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
-    { name = "mlx-lm", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
-    { name = "numpy", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
-    { name = "opencv-python", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
-    { name = "pillow", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
-    { name = "requests", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
-    { name = "starlette", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
-    { name = "tqdm", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
-    { name = "transformers", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
-    { name = "uvicorn", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
+    { name = "datasets" },
+    { name = "fastapi" },
+    { name = "llguidance" },
+    { name = "miniaudio" },
+    { name = "mlx" },
+    { name = "mlx-audio" },
+    { name = "mlx-lm" },
+    { name = "numpy" },
+    { name = "opencv-python" },
+    { name = "pillow" },
+    { name = "requests" },
+    { name = "starlette" },
+    { name = "tqdm" },
+    { name = "transformers" },
+    { name = "uvicorn" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/a3/60/e774080c90dd5a9d6ed51e3ff1c145243199048714bbca61cdf65e278a69/mlx_vlm-0.6.3.tar.gz", hash = "sha256:f5541eb7c22345a951f7fb78376ed80e8e42bd7c179fb0daa40a21592c7b2adb", size = 1360405, upload-time = "2026-06-10T18:06:34.457Z" }
 wheels = [
@@ -901,7 +904,7 @@ name = "multiprocess"
 version = "0.70.19"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "dill", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
+    { name = "dill" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/a2/f2/e783ac7f2aeeed14e9e12801f22529cc7e6b7ab80928d6dcce4e9f00922d/multiprocess-0.70.19.tar.gz", hash = "sha256:952021e0e6c55a4a9fe4cd787895b86e239a40e76802a789d6305398d3975897", size = 2079989, upload-time = "2026-01-19T06:47:39.744Z" }
 wheels = [
@@ -946,7 +949,7 @@ name = "opencv-python"
 version = "4.13.0.92"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "numpy", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
+    { name = "numpy" },
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/fc/6f/5a28fef4c4a382be06afe3938c64cc168223016fa520c5abaf37e8862aa5/opencv_python-4.13.0.92-cp37-abi3-macosx_13_0_arm64.whl", hash = "sha256:caf60c071ec391ba51ed00a4a920f996d0b64e3e46068aac1f646b5de0326a19", size = 46247052, upload-time = "2026-02-05T07:01:25.046Z" },
@@ -967,8 +970,8 @@ name = "pandas"
 version = "3.0.3"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "numpy", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
-    { name = "python-dateutil", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
+    { name = "numpy" },
+    { name = "python-dateutil" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/f8/87/4341c6252d1c47b08768c3d25ac487362bf403f0313ddae4a2a26c9b1b4c/pandas-3.0.3.tar.gz", hash = "sha256:696a4a00a2a2a35d4e5deb3fc946641b96c944f02230e4f76137fe35d806c4fc", size = 4651414, upload-time = "2026-05-11T18:54:29.21Z" }
 wheels = [
@@ -1286,7 +1289,7 @@ name = "python-dateutil"
 version = "2.9.0.post0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "six", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
+    { name = "six" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/66/c0/0c8b6ad9f17a802ee498c46e004a0eb49bc148f2fd230864601a86dcf6db/python-dateutil-2.9.0.post0.tar.gz", hash = "sha256:37dd54208da7e1cd875388217d5e00ebd4179249f90fb72437e91a35459a0ad3", size = 342432, upload-time = "2024-03-01T18:36:20.211Z" }
 wheels = [
@@ -1341,10 +1344,10 @@ name = "requests"
 version = "2.34.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "certifi", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
-    { name = "charset-normalizer", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
-    { name = "idna", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
-    { name = "urllib3", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
+    { name = "certifi" },
+    { name = "charset-normalizer" },
+    { name = "idna" },
+    { name = "urllib3" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/ac/c3/e2a2b89f2d3e2179abd6d00ebd70bff6273f37fb3e0cc209f48b39d00cbf/requests-2.34.2.tar.gz", hash = "sha256:f288924cae4e29463698d6d60bc6a4da69c89185ad1e0bcc4104f584e960b9ed", size = 142856, upload-time = "2026-05-14T19:25:27.735Z" }
 wheels = [
@@ -1356,8 +1359,8 @@ name = "rich"
 version = "15.0.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "markdown-it-py", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
-    { name = "pygments", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
+    { name = "markdown-it-py" },
+    { name = "pygments" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/c0/8f/0722ca900cc807c13a6a0c696dacf35430f72e0ec571c4275d2371fca3e9/rich-15.0.0.tar.gz", hash = "sha256:edd07a4824c6b40189fb7ac9bc4c52536e9780fbbfbddf6f1e2502c31b068c36", size = 230680, upload-time = "2026-04-12T08:24:00.75Z" }
 wheels = [
@@ -1379,7 +1382,7 @@ name = "scipy"
 version = "1.17.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "numpy", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
+    { name = "numpy" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/7a/97/5a3609c4f8d58b039179648e62dd220f89864f56f7357f5d4f45c29eb2cc/scipy-1.17.1.tar.gz", hash = "sha256:95d8e012d8cb8816c226aef832200b1d45109ed4464303e997c5b13122b297c0", size = 30573822, upload-time = "2026-02-23T00:26:24.851Z" }
 wheels = [
@@ -1444,7 +1447,7 @@ name = "sounddevice"
 version = "0.5.5"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "cffi", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
+    { name = "cffi" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/2a/f9/2592608737553638fca98e21e54bfec40bf577bb98a61b2770c912aab25e/sounddevice-0.5.5.tar.gz", hash = "sha256:22487b65198cb5bf2208755105b524f78ad173e5ab6b445bdab1c989f6698df3", size = 143191, upload-time = "2026-01-23T18:36:43.529Z" }
 wheels = [
@@ -1466,8 +1469,8 @@ name = "starlette"
 version = "1.3.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "anyio", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
-    { name = "typing-extensions", marker = "python_full_version < '3.13' and sys_platform != 'emscripten' and sys_platform != 'win32'" },
+    { name = "anyio" },
+    { name = "typing-extensions", marker = "python_full_version < '3.13'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/eb/e3/7c1dc7381d9f8ab7d854328ebfa884e62cb3f3d8549ddfd37c7814f42afa/starlette-1.3.1.tar.gz", hash = "sha256:05d0213193f2fbaae60e2ecb593b4add4262ad4e46536b54abe36f11a71724e0", size = 2703240, upload-time = "2026-06-12T09:23:11.602Z" }
 wheels = [
@@ -1479,7 +1482,7 @@ name = "tokenizers"
 version = "0.22.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "huggingface-hub", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
+    { name = "huggingface-hub" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/73/6f/f80cfef4a312e1fb34baf7d85c72d4411afde10978d4657f8cdd811d3ccc/tokenizers-0.22.2.tar.gz", hash = "sha256:473b83b915e547aa366d1eee11806deaf419e17be16310ac0a14077f1e28f917", size = 372115, upload-time = "2026-01-05T10:45:15.988Z" }
 wheels = [
@@ -1501,15 +1504,15 @@ name = "transformers"
 version = "5.12.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "huggingface-hub", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
-    { name = "numpy", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
-    { name = "packaging", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
-    { name = "pyyaml", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
-    { name = "regex", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
-    { name = "safetensors", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
-    { name = "tokenizers", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
-    { name = "tqdm", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
-    { name = "typer", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
+    { name = "huggingface-hub" },
+    { name = "numpy" },
+    { name = "packaging" },
+    { name = "pyyaml" },
+    { name = "regex" },
+    { name = "safetensors" },
+    { name = "tokenizers" },
+    { name = "tqdm" },
+    { name = "typer" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/0c/f9/4552e2ba55db1c943aea0d4c09a32e9cbe5445b9eabe9856900de503dc8f/transformers-5.12.0.tar.gz", hash = "sha256:f0cf42ae1464c2eb41e7e0e66d7fd4b66145f48af17093b4cc0b2e9781faa7f4", size = 8923020, upload-time = "2026-06-12T14:39:20.43Z" }
 wheels = [
@@ -1521,10 +1524,10 @@ name = "typer"
 version = "0.25.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "annotated-doc", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
-    { name = "click", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
-    { name = "rich", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
-    { name = "shellingham", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
+    { name = "annotated-doc" },
+    { name = "click" },
+    { name = "rich" },
+    { name = "shellingham" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/e4/51/9aed62104cea109b820bbd6c14245af756112017d309da813ef107d42e7e/typer-0.25.1.tar.gz", hash = "sha256:9616eb8853a09ffeabab1698952f33c6f29ffdbceb4eaeecf571880e8d7664cc", size = 122276, upload-time = "2026-04-30T19:32:16.964Z" }
 wheels = [
@@ -1566,8 +1569,8 @@ name = "uvicorn"
 version = "0.49.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "click", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
-    { name = "h11", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
+    { name = "click" },
+    { name = "h11" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/c4/1f/fa18009dea8469069cca78a4e877a008ab78f08b064bfc9ab891579077ff/uvicorn-0.49.0.tar.gz", hash = "sha256:ebf4271aa580d9de97f93192d4595176df6e91f9aae919ca73e4fc07df1e66a3", size = 91284, upload-time = "2026-06-03T22:01:30.448Z" }
 wheels = [
